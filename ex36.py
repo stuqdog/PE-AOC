@@ -53,8 +53,6 @@ def terrain_check():
     elif answer_t == "4":
         plains()
 
-
-
 def urban():
     with open(urban_table) as f:
         i = len(f.readlines())
