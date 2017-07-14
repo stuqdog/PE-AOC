@@ -76,7 +76,6 @@ def urban():
     # currently this generates a random number from 1 to x, where x is the
     # number of lines in the encounter doc. Then it reads that many lines
     # from the random encounter table, and then spits out the last one.
-    print "Urban TK"
     with open(urban_table) as f:
         i = len(f.readlines())
 
@@ -85,19 +84,19 @@ def urban():
     with open(urban_table) as f:
         for x in range(1, roll + 1):
             result = f.readline()
-            die_num = result[0]
-            die_size = result[2]
-            for char in result:
-                if char in string.digits:
-                    die_size += char
-                else:
-                    break
+            die_num = int(result[0])
+            die_size = int(result[2])
+    #        for char in result:
+    #            if char in string.digits:
+    #                die_size += char
+    #            else:
+    #                break
     # gotta find a way to mix vars into this, so we can random rolls
     encounter_number = 0
-    for r in range(0, int[die_num]):
-        encounter_number += random.randint(1, int[die_size])
+    for r in range(0, die_num):
+        encounter_number += random.randint(1, die_size)
 
-    print encounter_number, result.lstrip(string.digits,"d")
+    print encounter_number, result.lstrip("1234567890d")
 
 
 

@@ -1,6 +1,3 @@
-3d6 test
-4d12 lines
-1d4 for
-2d6 test
-5d6 purposes
-9d20 only
+3d8 goblins
+2d4 fart goblins
+1d6 stinky goblins
