@@ -73,9 +73,6 @@ def terrain_check():
 
 
 def urban():
-    # currently this generates a random number from 1 to x, where x is the
-    # number of lines in the encounter doc. Then it reads that many lines
-    # from the random encounter table, and then spits out the last one.
     with open(urban_table) as f:
         i = len(f.readlines())
 
@@ -86,17 +83,35 @@ def urban():
             result = f.readline()
             die_num = int(result[0])
             die_size = int(result[2])
-    #        for char in result:
-    #            if char in string.digits:
-    #                die_size += char
-    #            else:
-    #                break
-    # gotta find a way to mix vars into this, so we can random rolls
+
     encounter_number = 0
     for r in range(0, die_num):
         encounter_number += random.randint(1, die_size)
 
-    print encounter_number, result.lstrip("1234567890d")
+    print encounter_number, result.lstrip("1234567890d ")
+    urban_end()
+
+def urban_end():
+    next_step = raw_input("> ")
+    if next_step == "ct":
+        terrain_check()
+    elif next_step == "combat":
+        combat()
+    elif next_step == "home":
+        home()
+    elif next_step == "exit":
+        exit(0)
+    elif next_step == "help":
+        print"""ct: Change terrain
+combat: combat
+home: return home
+exit: quit program
+anything else: generate new urban encounter"""
+        urban_end()
+    else:
+        urban()
+
+
 
 
 
