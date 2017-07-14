@@ -4,12 +4,6 @@
 # build in option to move directly from somewhere to home, or to forest,
 # or to plains, etc.
 
-# how to read the random encounter tables? Jump to a specific line?
-# I could just read every line from 1 to x where x is target line, and
-# then print line. But there's probably a better way to do it than that.
-        # Urban uses the above mentioned method. Seems to work fine.
-        # Let's start with that and figure out how to print it with random
-        # numbers added in.
 
 import random
 import string
@@ -17,10 +11,6 @@ from sys import exit, argv
 
 script, urban_table = argv#forest_table, plains_table, jungle_table = argv
 
-# these are clunky. Replace with a "with x as y" thing.
-# with open(urban_table) as urban_t:
-# urban_t = open(urban_table)
-#forest_t = open(forest_table)
 
 def home():
     print """Welcome to the GM assistant!
@@ -32,22 +22,15 @@ What can I assist you with today?
         answer = raw_input("> ")
         if answer in ["1", "2"]:
             break
-    #    elif answer == "2":
-    #        break
         else:
-            print "error, pls enter real answer"
+            print "ERROR: please enter 1 or 2"
+
     if answer == "1":
         terrain_check()
     elif answer == "2":
         combat()
 
-#    answer = raw_input("> ")
-#    if answer == "1":
-#        terrain_check()
-#    elif answer == "2":
-#        combat()
-#    else:
-#        home()
+
 
 def terrain_check():
     print """What kind of terrain are you dealing with?
@@ -83,8 +66,8 @@ def urban():
             result = f.readline()
 
 
-    die_num = " "#int(result[0])
-    die_size = " "#int(result[2])
+    die_num = " "
+    die_size = " "
     for x in range(0, 2):
         if result[x] in string.digits:
             die_num += result[x]
@@ -119,18 +102,14 @@ def urban_end():
     elif next_step == "exit":
         exit(0)
     elif next_step == "help":
-        print"""ct: Change terrain
-combat: combat
-home: return home
-exit: quit program
-anything else: generate new urban encounter"""
+        print""" ct: Change terrain
+ combat: combat
+ home: return home
+ exit: quit program
+ anything else: generate new urban encounter"""
         urban_end()
     else:
         urban()
-
-
-
-
 
 
 
