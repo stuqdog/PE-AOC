@@ -6,24 +6,31 @@ from sys import argv
 script, text = argv
 
 solution = 1
-
-full_number = None
-
-with open(text) as f:
-    num_list = f.readlines()
-    line_length = len(f.readlines())
+full_number = " "
 
 with open(text) as f:
-    line_length = len(f.readlines())
-    print line_length
-    f.seek(0)
-    for i in range(0, line_length):
-        if i == 0:
-            full_number = f.readline()
-        else:
-            full_number += f.readline()
+    for line in f:
+        full_number += line.rstrip("\n")
 
-print full_number
+full_num = full_number.lstrip(" ")
+
+for x in range(0, 13):
+    current_value = full_num[x]
+    solution *= int(current_value)
+
+for x in range(13, 1000):
+    check = 1
+    for y in range(0, 13):
+        current_value = full_num[x - y]
+        check *= int(current_value)
+    if check > solution:
+        solution = check
+
+
+print full_num
+print solution
+
+
 
 
 
