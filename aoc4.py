@@ -18,14 +18,54 @@ import string
 
 letters = string.ascii_letters
 numbers = string.digits
-first_strip = "%s[]\n" % letters
+first_strip = "%s[]\n%s" % (letters, numbers)
+all_but_numbers = "%s[]-\n" % letters
 
+solution = 0
 
 script, text = argv
 
 with open(text) as f:
     for line in f:
+        match = True
+        char_one, char_two, char_three, = None, None, None
+        char_four, char_five = None, None
+        char_one_num, char_two_num, char_three_num = 0, 0, 0
+        char_four_num, char_five_num = 0, 0
+        line_s = line.rstrip("\n")
+        key = [line_s[-6], line_s[-5], line_s[-4], line_s[-3], line_s[-2]]
         sort_line = line.rstrip(first_strip)
-        sort_line = sort_line.rstrip(numbers)
-        sort_line = sorted(sort_line)
-        print sort_line
+        room_value = int(line.strip(all_but_numbers))
+    #reads sorted characters, keeps track of five biggest occurrences
+        for char in letters:
+            if sort_line.count(char) > char_one_num:
+                char_five_num, char_five = char_four_num, char_four
+                char_four_num, char_four = char_three_num, char_three
+                char_three_num, char_three = char_two_num, char_two
+                char_two_num, char_two = char_one_num, char_one
+                char_one_num, char_one = sort_line.count(char), char
+            elif sort_line.count(char) > char_two_num:
+                char_five_num, char_five = char_four_num, char_four
+                char_four_num, char_four = char_three_num, char_three
+                char_three_num, char_three = char_two_num, char_two
+                char_two_num, char_two = sort_line.count(char), char
+            elif sort_line.count(char) > char_three_num:
+                char_five_num, char_five = char_four_num, char_four
+                char_four_num, char_four = char_three_num, char_three
+                char_three_num, char_three = sort_line.count(char), char
+            elif sort_line.count(char) > char_four_num:
+                char_five_num, char_five = char_four_num, char_four
+                char_four_num, char_four = sort_line.count(char), char
+            elif sort_line.count(char) > char_five_num:
+                char_five_num, char_five = sort_line.count(char), char
+
+        test = [char_one, char_two, char_three, char_four, char_five]
+        print key, test
+        for x in range(0, 5):
+            if key[x] != test[x]:
+                match = False
+                break
+        if match == True:
+            solution += room_value
+
+print solution
