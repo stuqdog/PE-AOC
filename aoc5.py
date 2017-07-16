@@ -1,3 +1,4 @@
+
 #1 Set up thing that converts strings to MD5.
 #2 create key_base, counter, and key_append
 #3 while x != 8, add key append to key_base, convert. If first 5 digits are 0,
