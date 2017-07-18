@@ -23,16 +23,18 @@ alphabet = string.ascii_lowercase
 with open(text) as f:
     for line in f:
         x = 0
-        print line[x]
         good_abba = False
         bad_abba = False
         check = None
-        while line[x] in chars:
+        while line[x] != " ":
 
         # creates a good abba test section
+            if line[x] not in chars:
+                break
             while good_abba == False:
-            #    print line[x]
-                if line[x] not in alphabet:
+                if line[x] not in chars:
+                    break
+                if line[x] in ["[", " "]:
                     break
                 elif check == None:
                     check = line[x]
@@ -41,13 +43,21 @@ with open(text) as f:
                     check += line[x]
                     x += 1
 
+            if line[x] not in chars:
+                break
         # checks for good abbas
+            print check
             if good_abba == False:
+                print good_abba
                 for y in range(3, len(check)):
                     if check[y - 3] == check[y] and check[y - 2] == check[y - 1]:
                         good_abba = True
                         break
+            if not line[x]:
+                break
             x += 1
+            if not line[x]:
+                break
             check = None
             print line[x]
             if line[x] not in alphabet:
@@ -55,7 +65,9 @@ with open(text) as f:
 
             # creates a bad abba test section
             while True:
-                if line[x] in ("]", "\n"):
+                if line[x] not in chars:
+                    break
+                if line[x] == "]":
                     break
                 elif check == None:
                     check = line[x]
@@ -65,12 +77,16 @@ with open(text) as f:
                     x += 1
 
             # checks for bad abbas
+            print check
             for y in range(3, len(check)):
                 if check[y - 3] == check[y] and check[y - 2] == check[y - 1]:
                     bad_abba = True
                     break
 
+            if line[x] not in chars:
+                break
             x += 1
+
             check = None
             if line[x] not in chars:
                 break
