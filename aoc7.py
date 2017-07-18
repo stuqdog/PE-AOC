@@ -1,100 +1,62 @@
-# Read lines.
-# for each line, divide it into good-abba and bad-abba sections
-# to do this, add line[x] to check, one at a time, until line[x] = [
-# then, look for an abba. If we find one, then good-abba = True
-# then, reset check. add line[x] to check one at a time until line[x] = ]
-# then, look for an abba. If we find one, then bad-abba = True.
-# as long as bad-abba = false, break, repeat 3 to 6. If it's true, break.
-# once line[x] = "\n", we look at bad abba and good abba.
-# if good-abba is true and bad-abba is false, solution += 1
-
-
 from sys import argv
-import string
 
 script, text = argv
 solution = 0
-chars = string.ascii_lowercase
-chars += "["
-chars += "]"
-alphabet = string.ascii_lowercase
-
 
 with open(text) as f:
     for line in f:
-        x = 0
         good_abba = False
         bad_abba = False
-        check = None
-        while line[x] != " ":
+        bad_check = None
+        good_check = None
+        section = "good"
 
-        # creates a good abba test section
-            if line[x] not in chars:
-                break
-            while good_abba == False:
-                if line[x] not in chars:
-                    break
-                if line[x] in ["[", " "]:
-                    break
-                elif check == None:
-                    check = line[x]
-                    x += 1
-                else:
-                    check += line[x]
-                    x += 1
+        for char in line:
+            if char not in ["[", "]"]:
+                if section == "good":
+                    bad_check = None
+                    if good_check == None:
+                        good_check = char
+                    else:
+                        good_check += char
+                elif section == "bad":
+                    good_check = None
+                    if bad_check == None:
+                        bad_check = char
+                    else:
+                        bad_check += char
 
-            if line[x] not in chars:
-                break
-        # checks for good abbas
-            print check
-            if good_abba == False:
-                print good_abba
-                for y in range(3, len(check)):
-                    if check[y - 3] == check[y] and check[y - 2] == check[y - 1]:
-                        good_abba = True
-                        break
-            if not line[x]:
-                break
-            x += 1
-            if not line[x]:
-                break
-            check = None
-            print line[x]
-            if line[x] not in alphabet:
-                break
+            if char == "[":
+                section = "bad"
+                for x in range(3, len(good_check)):
+                    if good_check[x] == good_check[x - 3]:
+                        if good_check[x - 1] == good_check[x - 2]:
+                            if good_check[x - 1] != good_check[x]:
+                                good_abba = True
 
-            # creates a bad abba test section
-            while True:
-                if line[x] not in chars:
-                    break
-                if line[x] == "]":
-                    break
-                elif check == None:
-                    check = line[x]
-                    x += 1
-                else:
-                    check += line[x]
-                    x += 1
+            if char == "]":
+                section = "good"
+                for x in range(3, len(bad_check)):
+                    if bad_check[x] == bad_check[x - 3]:
+                        if bad_check[x - 1] == bad_check[x - 2]:
+                            if bad_check[x - 1] != bad_check[x]:
+                                bad_abba = True
 
-            # checks for bad abbas
-            print check
-            for y in range(3, len(check)):
-                if check[y - 3] == check[y] and check[y - 2] == check[y - 1]:
-                    bad_abba = True
-                    break
+        if section == "good":
+            for x in range(3, len(good_check)):
+                if good_check[x] == good_check[x - 3]:
+                    if good_check[x - 1] == good_check[x - 2]:
+                        if good_check[x - 1] != good_check[x]:
+                            good_abba = True
 
-            if line[x] not in chars:
-                break
-            x += 1
+        elif section == "bad":
+            for x in range(3, len(bad_check)):
+                if bad_check[x] == bad_check[x - 3]:
+                    if bad_check[x - 1] == bad_check[x - 2]:
+                        if bad_check[x - 1] != bad_check[x]:
+                            bad_abba = True
 
-            check = None
-            if line[x] not in chars:
-                break
-
-            if bad_abba == True:
-                break
-
-        if bad_abba == False and good_abba == True:
+        if good_abba == True and bad_abba == False:
             solution += 1
 
 print solution
