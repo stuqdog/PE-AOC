@@ -11,7 +11,7 @@ solution = 22
 numbers = [11, 13, 14, 16, 17, 18, 19, 20]
 
 while True:
-    for x in range(1, 20):
+    for x in numbers:
         if solution % x != 0:
             break
     if solution % x == 0:
