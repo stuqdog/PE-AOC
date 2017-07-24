@@ -2,9 +2,7 @@ from sys import argv
 import string
 
 script, text = argv
-
 numbers = string.digits
-numbers += "\n"
 
 # setting each row as its own list so that we can put them in the larger list
 # grid, thus allowing us to call specific lights by both their X and Y
@@ -25,18 +23,16 @@ grid = [row_zero, row_one, row_two, row_three, row_four, row_five]
 # don't need it to run in order.
 placeholder = {}
 
-
 # quickly fill out each row with 50 blank lights
 for y in range(0, 6):
     for x in range(0, 50):
         grid[y].append(" ")
 
 
-
 with open(text) as f:
     for line in f:
         if "rect" in line:
-            rect_size = line.lstrip("rect ")
+            rect_size = line.strip("rect \n")
             rect_x = rect_size.rstrip(numbers)
             rect_x = int(rect_x.rstrip("x"))
             rect_y = rect_size.lstrip(numbers)
@@ -46,8 +42,7 @@ with open(text) as f:
                 for x in range(0, rect_x):
                     grid[y][x] = "*"
         elif "rotate row" in line:
-            rotate_x = line.lstrip("rotate row y=")
-            rotate_x = rotate_x.strip("\n")
+            rotate_x = line.strip("rotate row y=\n")
             row = rotate_x.rstrip(numbers)
             row = int(row.rstrip(" by "))
             shift = rotate_x.lstrip(numbers)
@@ -58,8 +53,7 @@ with open(text) as f:
                 new_x = ((x + 50) - shift) % 50
                 grid[row][x] = placeholder[new_x]
         elif "rotate column" in line:
-            rotate_y = line.lstrip("rotate column x=")
-            rotate_y = rotate_y.strip("\n")
+            rotate_y = line.strip("rotate column x= \n")
             column = rotate_y.rstrip(numbers)
             column = int(column.rstrip(" by "))
             shift = rotate_y.lstrip(numbers)
