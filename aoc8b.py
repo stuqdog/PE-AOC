@@ -50,8 +50,7 @@ with open(text) as f:
             for x in range(0, 50):
                 placeholder[x] = grid[row][x]
             for x in range(0, 50):
-                new_x = ((x + 50) - shift) % 50
-                grid[row][x] = placeholder[new_x]
+                grid[row][x] = placeholder[(x + 50 - shift) % 50]
         elif "rotate column" in line:
             rotate_y = line.strip("rotate column x= \n")
             column = rotate_y.rstrip(numbers)
@@ -61,8 +60,7 @@ with open(text) as f:
             for x in range(0, 6):
                 placeholder[x] = grid[x][column]
             for x in range(0, 6):
-                new_x = ((x + 6) - shift) % 6
-                grid[x][column] = placeholder[new_x]
+                grid[x][column] = placeholder[(x + 6 - shift) % 6]
 
 for x in range(0, 6):
     print ''.join(grid[x])

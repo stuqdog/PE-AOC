@@ -7,9 +7,9 @@
 
 import random
 import string
-from sys import exit, argv
+from sys import exit
 
-script, urban_table = argv#forest_table, plains_table, jungle_table = argv
+
 
 
 def home():
@@ -54,14 +54,14 @@ def terrain_check():
         plains()
 
 def urban():
-    with open(urban_table) as f:
+    with open('urban.txt') as f:
         i = len(f.readlines())
 
     roll = random.randint(1, i)
 
-    with open(urban_table) as f:
+    with open('urban.txt') as f:
         for x in range(1, roll + 1):
-            result = f.readline()
+            result = f.readline().strip("\n")
 
 
     die_num = " "
