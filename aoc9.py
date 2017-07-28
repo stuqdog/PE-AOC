@@ -15,23 +15,51 @@
 import string
 
 
-dup_num = " "
-dup_len = " "
+dup_num = ""
+dup_len = ""
 dup_count = 0
-dup_string = " "
+dup_string = ""
 dup_stats = False
 dup_process = False
-raw = " "
-solution = " "
+raw = ""
+solution = ""
 
 with open("aoc9.txt") as f:
     for line in f:
         raw += line
 
-raw = raw.strip()
+
+
 
 for c in raw:
-    if dup_stats == False and dup_process == False:
+
+    if dup_stats == False and dup_process == True:
+        if dup_count < int(dup_len):
+            dup_string += c
+            dup_count += 1
+        if dup_count == int(dup_len):
+            dup_string = dup_string.strip()
+            for x in range(0, int(dup_num)):
+                solution += dup_string
+            dup_process = False
+
+    elif dup_stats == True and dup_process == True:
+        if c in string.digits:
+            dup_num += c
+
+        elif c == ")":
+            dup_stats = False
+
+
+    elif dup_stats == True and dup_process == False:
+        if c in string.digits:
+            dup_len += c
+
+        elif c == "x":
+            dup_process = True
+
+
+    elif dup_stats == False and dup_process == False:
         dup_num = " "
         dup_len = " "
         dup_string = " "
@@ -42,32 +70,4 @@ for c in raw:
             dup_stats = True
         else: solution += c
 
-    if dup_stats == True and dup_process == False:
-        if c in string.digits:
-            dup_len += c
-
-        elif c == "x":
-            dup_process = True
-
-    if dup_stats == True and dup_process == True:
-        if c in string.digits:
-            dup_num += c
-            print dup_num
-
-        elif c == ")":
-            dup_stats = False
-
-    if dup_stats == False and dup_process == True:
-        # dup_num = dup_num.strip()
-        # dup_num = int(dup_num)
-        # dup_len = int(dup_len.strip())
-        if dup_count < dup_len:
-            dup_string += c
-            dup_count += 1
-        if dup_count == dup_len:
-            for x in range(0, dup_num):
-                solution += dup_string
-            dup_process = False
-
-#print solution
-solution = solution.strip()
+print len(solution)
