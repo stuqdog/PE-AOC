@@ -1,26 +1,18 @@
-# Read the file. while dup_stats is false, add bits to a string called solution.
-#
-# if we come across a parenthesis, turn on dup_stats. while duplicate is on, we
-# read until we reach a close parenthesis, putting values into dup_length and
-# dup_num.
-#
-# after close parenthesis, we turn off stats, and turn on dup_process.
-# while dup_process is on, we print dup_length character dup_num times. Then, turn
-# off dup_process.
-#
-# Rinse and repeat, then add up the length of what we have.
-#
-# How do we structure the functioning?
-
 import string
 
+#note: the next 4 vars are all defined below, so defining them here is
+#unneccessary, but lets me comment in what purpose they serve.
 
-dup_num = ""
+# number of times a section is duplicated.
+dup_number = ""
+#number of character in the section remaining to to be duplicated. Ticks down
+# as characters are added to dup_string.
 dup_len = ""
-dup_count = 0
+# the string that gets duplicated
 dup_string = ""
-dup_stats = False
-dup_process = False
+
+
+stage = "adding"
 raw = ""
 solution = ""
 
@@ -28,46 +20,39 @@ with open("aoc9.txt") as f:
     for line in f:
         raw += line
 
-
-
-
 for c in raw:
 
-    if dup_stats == False and dup_process == True:
-        if dup_count < int(dup_len):
+    if stage == "duplicate":
+        if int(dup_len) > 0:
             dup_string += c
-            dup_count += 1
-        if dup_count == int(dup_len):
+            dup_len = int(dup_len) - 1
+        if dup_len == 0:
             dup_string = dup_string.strip()
             for x in range(0, int(dup_num)):
                 solution += dup_string
-            dup_process = False
+            stage = "adding"
 
-    elif dup_stats == True and dup_process == True:
+    elif stage == "dup_num":
         if c in string.digits:
             dup_num += c
 
         elif c == ")":
-            dup_stats = False
+            stage = "duplicate"
 
 
-    elif dup_stats == True and dup_process == False:
+    elif stage == "dup_len":
         if c in string.digits:
             dup_len += c
 
         elif c == "x":
-            dup_process = True
+            stage = "dup_num"
 
-
-    elif dup_stats == False and dup_process == False:
-        dup_num = " "
-        dup_len = " "
-        dup_string = " "
-        dup_count = 0
-        dup_stats = False
-        dup_process = False
+    elif stage == "adding":
+        dup_num = ""
+        dup_len = ""
+        dup_string = ""
         if c == "(":
-            dup_stats = True
+            stage = "dup_len"
         else: solution += c
 
 print len(solution)
