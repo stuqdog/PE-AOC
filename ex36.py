@@ -4,6 +4,9 @@
 # build in option to move directly from somewhere to home, or to forest,
 # or to plains, etc.
 
+#TO DO: Convert this into classes. We can make a terrain class, a combat class,
+#etc. etc. Could be cleaned up nicely.
+
 
 import random
 import string
