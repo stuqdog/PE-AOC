@@ -14,11 +14,12 @@ with open("aoc9.txt") as f:
     for line in f:
         raw += line
 
-
 for c in raw:
 
 # this checks if the duration of a multiplier has gone out. if it has, we
 # delete that multiplier entry and divide the multiplier_var by the multiplier.
+
+#this needs to be up top so entries don't lose 1 as soon as they enter the dict.
     for entry in buffer_dict:
         buffer_dict[entry] -= 1
 
@@ -51,6 +52,8 @@ for c in raw:
     elif c in [" ", "\n"]:
         pass
 
+#this needs to be at the bottom so we don't divide the multiplier before
+#we get a chance to add it to our solution
     for entry in buffer_dict:
         if buffer_dict[entry] == 0:
             dict_delete.append(entry)
