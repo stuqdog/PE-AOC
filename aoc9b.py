@@ -21,12 +21,6 @@ for c in raw:
 # delete that multiplier entry and divide the multiplier_var by the multiplier.
     for entry in buffer_dict:
         buffer_dict[entry] -= 1
-        if buffer_dict[entry] == 0:
-            dict_delete.append(entry)
-            multiplier /= int(entry.strip('a'))
-    for entry in dict_delete:
-        del buffer_dict[entry]
-    dict_delete = []
 
     if c != "(" and mode == "add":
         solution += multiplier
@@ -56,5 +50,13 @@ for c in raw:
         length_or_size = "length"
     elif c in [" ", "\n"]:
         pass
+
+    for entry in buffer_dict:
+        if buffer_dict[entry] == 0:
+            dict_delete.append(entry)
+            multiplier /= int(entry.strip('a'))
+    for entry in dict_delete:
+        del buffer_dict[entry]
+    dict_delete = []
 
 print solution
