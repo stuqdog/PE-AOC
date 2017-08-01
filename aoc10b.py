@@ -12,7 +12,6 @@ with open("aoc10.txt") as f:
         entry = line.rstrip("\n")
         instructions.append(entry)
 
-
 for order in instructions:
     if "value" in order:
         num_and_val = re.search(r'value (\d*) goes to (.*)', order)
@@ -47,13 +46,11 @@ while True:
         if high_bot not in bots:
             bots[high_bot] = []
 
-
         if len(bots[bot_number]) == 2:
             bots[bot_number] = sorted(bots[bot_number])
             bots[high_bot].append(bots[bot_number][1])
             bots[low_bot].append(bots[bot_number][0])
             bots[bot_number] = []
-
 
         if "output 0" in bots and "output 1" in bots and "output 2" in bots:
             if (bots["output 0"] != [] and bots["output 1"] != [] and

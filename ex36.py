@@ -6,10 +6,13 @@
 
 #TO DO: Convert this into classes. We can make a terrain class, a combat class,
 #etc. etc. Could be cleaned up nicely.
+    # Learn Regex.
+    # Use classes and regex to create a clean combat option.
 
 
 import random
 import string
+import re
 from sys import exit
 
 
@@ -70,34 +73,35 @@ def urban():
         for x in range(1, roll + 1):
             result = f.readline().strip("\n")
 
+    print_num = True
 
-    die_num = ""
-    die_size = ""
-    for x in range(0, 2):
-        if result[x] in string.digits:
-            die_num += result[x]
-        else:
-            die_num = die_num.lstrip()
-            break
-    die_num = die_num.lstrip()
-    find_size = result.lstrip("0123456789")
-    find_size = find_size.lstrip("d")
-    for x in range(0, 3):
-        if find_size[x] in string.digits:
-            die_size += find_size[x]
-        else:
-            die_size = die_size.lstrip()
-            break
+    entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
+    if entry:
+        die_num = int(entry.group(1))
+        die_size = int(entry.group(2))
+        encounter = entry.group(3)
+    if not entry:
+        entry = re.match(r'(\d*) (.*?), ', result, re.I)
+        if entry:
+            die_num = int(entry.group(1))
+            die_size = 1
+            encounter = entry.group(2)
+    if not entry:
+        entry = re.match(r'(.*?), ', result, re.I)
+        print_num = False
+        encounter = entry.group(1)
+        die_num, die_size = 1, 1
 
     encounter_number = 0
-    if die_num != "":
-        for r in range(0, int(die_num)):
-            encounter_number += random.randint(1, int(die_size))
-    else:
-        encounter_number = ""
-    print encounter_number, result.lstrip("1234567890d ")
+    for r in range(0, int(die_num)):
+        encounter_number += random.randint(1, int(die_size))
 
+    if print_num == True:
+        print encounter_number, result.lstrip("1234567890d ")
+    else:
+        print result
     urban_end()
+
 
 def urban_end():
     next_step = raw_input("> ")
@@ -123,36 +127,41 @@ def urban_end():
 def bathhouse():
     with open('bathhouse.txt') as f:
         i = len(f.readlines())
-        roll = random.randint(1, i)
+
+    roll = random.randint(1, i)
 
     with open('bathhouse.txt') as f:
         for x in range(1, roll + 1):
             result = f.readline().strip("\n")
 
+    print_num = True
 
-    die_num = ""
-    die_size = ""
-    for x in range(0, 2):
-        if result[x] in string.digits:
-            die_num += result[x]
-        else:
-            break
-    find_size = result.lstrip("0123456789")
-    find_size = find_size.lstrip("d")
-    for x in range(0, 3):
-        if find_size[x] in string.digits:
-            die_size += find_size[x]
-        else:
-            break
+    entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
+    if entry:
+        die_num = int(entry.group(1))
+        die_size = int(entry.group(2))
+        encounter = entry.group(3)
+    if not entry:
+        entry = re.match(r'(\d+) (.*?), ', result, re.I)
+        if entry:
+            die_num = int(entry.group(1))
+            die_size = 1
+            encounter = entry.group(2)
+    if not entry:
+        print_num = False
+        entry = re.match(r'(.*?), ', result, re.I)
+        encounter = entry.group(1)
+        die_num, die_size = 1, 1
 
     encounter_number = 0
-    if die_num != "":
-        for r in range(0, int(die_num)):
-            encounter_number += random.randint(1, int(die_size))
+    for r in range(0, int(die_num)):
+        encounter_number += random.randint(1, int(die_size))
+    if print_num == True:
+        print encounter_number, result.lstrip("1234567890d ")
     else:
-        encounter_number = ""
-    print encounter_number, result.lstrip("1234567890d ")
+        print result
     bathhouse_end()
+
 
 def bathhouse_end():
     next_step = raw_input("> ")
@@ -183,7 +192,18 @@ def jungle():
     print "Jungle TK"
 def plains():
     print "Plains TK"
+
+
+
 def combat():
+    # We need to, when going to combat from an encounter, return the result from
+    # that encounter. make that the template for combat, but let us replace it
+    # if we want. Then use classes to turn it into enemies, and put those classes
+    # occurrences in a dictionary. class features are HP, damage, AC, to hit,
+    # maybe spells, for casters, maybe a way to capture unique abilities?
+    # then we have combat simulation for those things, when their HP is reduced
+    # to zero, we delete them from our combat dictionary. Learn regex to cleanly
+    # reduce encounter results into numbers and strings for the actual encounter
     print "Combat TK"
 
 
