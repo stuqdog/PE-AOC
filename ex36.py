@@ -73,8 +73,6 @@ def urban():
         for x in range(1, roll + 1):
             result = f.readline().strip("\n")
 
-    print_num = True
-
     entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
     if entry:
         die_num = int(entry.group(1))
@@ -83,12 +81,10 @@ def urban():
     if not entry:
         entry = re.match(r'(\d*) (.*?), ', result, re.I)
         if entry:
-            die_num = int(entry.group(1))
-            die_size = 1
+            die_num, die_size = int(entry.group(1)), 1
             encounter = entry.group(2)
     if not entry:
         entry = re.match(r'(.*?), ', result, re.I)
-        print_num = False
         encounter = entry.group(1)
         die_num, die_size = 1, 1
 
@@ -96,10 +92,10 @@ def urban():
     for r in range(0, int(die_num)):
         encounter_number += random.randint(1, int(die_size))
 
-    if print_num == True:
-        print encounter_number, result.lstrip("1234567890d ")
+    if encounter_number > 1:
+        print encounter_number, (result.lstrip("1234567890d")).lstrip()
     else:
-        print result
+        print (result.lstrip("1234567890d")).lstrip()
     urban_end()
 
 
@@ -134,8 +130,6 @@ def bathhouse():
         for x in range(1, roll + 1):
             result = f.readline().strip("\n")
 
-    print_num = True
-
     entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
     if entry:
         die_num = int(entry.group(1))
@@ -148,7 +142,6 @@ def bathhouse():
             die_size = 1
             encounter = entry.group(2)
     if not entry:
-        print_num = False
         entry = re.match(r'(.*?), ', result, re.I)
         encounter = entry.group(1)
         die_num, die_size = 1, 1
@@ -156,11 +149,13 @@ def bathhouse():
     encounter_number = 0
     for r in range(0, int(die_num)):
         encounter_number += random.randint(1, int(die_size))
-    if print_num == True:
-        print encounter_number, result.lstrip("1234567890d ")
+
+    if encounter_number > 1:
+        print encounter_number, (result.lstrip("1234567890d")).lstrip()
     else:
-        print result
+        print (result.lstrip("123456789d")).lstrip()
     bathhouse_end()
+
 
 
 def bathhouse_end():
@@ -187,7 +182,56 @@ def bathhouse_end():
 
 
 def forest():
-    print "Forest TK"
+    with open('forest.txt') as f:
+        i = len(f.readlines())
+
+    roll = random.randint(1, i)
+
+    with open('forest.txt') as f:
+        for x in range(1, roll + 1):
+            result = f.readline().strip("\n")
+    print result
+    # entry = re.match(r'''(\d*)d(\d*) (.*) <(H[D|P]): (\d*), AC: (\d*),
+    # damage: (\d*)d(\d*), morale: (\*d)> .*''', result, re.I)
+    test = '(\d*)d(\d*) (.*) <(H[D|P]): (\d*), AC: (\d*),'
+    test += ' damage: (\d*)d(\d*), morale: (\d*)>,'
+    entry = re.match(test, result, re.I)
+    if entry:
+        die_num = int(entry.group(1))
+        die_size = int(entry.group(2))
+        encounter = entry.group(3)
+        if entry.group(4) == "HP":
+            HP = int(entry.group(5))
+            HD = None
+        elif entry.group(4) == "HD":
+            HD = int(entry.group(5))
+            HP = None
+        AC = entry.group(6)
+        damage = [int(entry.group(7)), int(entry.group(8))]
+        morale = entry.group(9)
+        print die_num, die_size, encounter, AC, damage, morale
+        exit()
+    else: print "ERROR"
+
+    encounter_number = 0
+    for r in range(0, int(die_num)):
+        encounter_number += random.randint(1, int(die_size))
+
+    if encounter_number > 1:
+        print encounter_number, (result.lstrip("1234567890d")).lstrip()
+    else:
+        print (result.lstrip("1234567890d")).lstrip()
+    forest_end()
+
+
+
+
+
+
+
+
+
+
 def jungle():
     print "Jungle TK"
 def plains():
@@ -198,13 +242,25 @@ def plains():
 def combat():
     # We need to, when going to combat from an encounter, return the result from
     # that encounter. make that the template for combat, but let us replace it
-    # if we want. Then use classes to turn it into enemies, and put those classes
+    # if we want. Then use classes to turn it into enemies, and put those class
     # occurrences in a dictionary. class features are HP, damage, AC, to hit,
     # maybe spells, for casters, maybe a way to capture unique abilities?
     # then we have combat simulation for those things, when their HP is reduced
     # to zero, we delete them from our combat dictionary. Learn regex to cleanly
     # reduce encounter results into numbers and strings for the actual encounter
     print "Combat TK"
+
+
+class encounter(object):
+
+    def __init__(self, HP, AC, damage, morale):
+        self.HP = HP
+        self.AC = AC
+        self.damage = damage
+        self.morale = morale
+
+
+
 
 
 home()

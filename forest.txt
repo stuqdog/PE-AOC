@@ -1,0 +1,1 @@
+1d6 pale knights <HD: 6, AC: 12, damage: 1d12, Morale: 8>, plotting a theft.
