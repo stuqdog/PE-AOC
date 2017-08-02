@@ -14,6 +14,7 @@ import random
 import string
 import re
 from sys import exit
+encounter_number = 0
 
 
 
@@ -190,7 +191,7 @@ def forest():
     with open('forest.txt') as f:
         for x in range(1, roll + 1):
             result = f.readline().strip("\n")
-    print result
+
     # entry = re.match(r'''(\d*)d(\d*) (.*) <(H[D|P]): (\d*), AC: (\d*),
     # damage: (\d*)d(\d*), morale: (\*d)> .*''', result, re.I)
     test = '(\d*)d(\d*) (.*) <(H[D|P]): (\d*), AC: (\d*),'
@@ -209,8 +210,8 @@ def forest():
         AC = entry.group(6)
         damage = [int(entry.group(7)), int(entry.group(8))]
         morale = entry.group(9)
-        print die_num, die_size, encounter, AC, damage, morale
-        exit()
+
+
     else: print "ERROR"
 
     encounter_number = 0
@@ -221,9 +222,30 @@ def forest():
         print encounter_number, (result.lstrip("1234567890d")).lstrip()
     else:
         print (result.lstrip("1234567890d")).lstrip()
-    forest_end()
 
+    return "forest_end", encounter_number
+    # forest_end()
 
+def forest_end():
+    next_step = raw_input("> ")
+    if next_step == "ct":
+        terrain_check()
+    elif next_step == "combat":
+        return "combat"
+        combat()
+    elif next_step == "home":
+        home()
+    elif next_step == "exit":
+        exit(0)
+    elif next_step == "help":
+        print""" ct: Change terrain
+ combat: combat
+ home: return home
+ exit: quit program
+ anything else: generate new urban encounter"""
+        forest_end()
+    else:
+        forest()
 
 
 
@@ -249,18 +271,39 @@ def combat():
     # to zero, we delete them from our combat dictionary. Learn regex to cleanly
     # reduce encounter results into numbers and strings for the actual encounter
     print "Combat TK"
+    print encounter_number
+
+    encounter_set = {}
+    encounter_counter = 1
 
 
-class encounter(object):
+    for enemy in range(0, encounter_number):
+        if encounter_counter > 1:
+            this_enemy = encounter + " %s" % str(encounter_counter)
+        if HD != None:
+            HP = 0
+            for x in range(0, HD):
+                HP += random.randint(1, 8)
+        encounter_set[this_enemy] = enemy_class(HP, AC, damage, morale)
 
-    def __init__(self, HP, AC, damage, morale):
-        self.HP = HP
-        self.AC = AC
-        self.damage = damage
-        self.morale = morale
+    print encounter_set
+    exit()
+
+class enemy_class(object):
+
+    def __init__(self, class_HP, class_AC, class_damage, class_morale):
+        self.class_HP = class_HP
+        self.class_AC = class_AC
+        self.class_damage = class_damage
+        self.class_morale = class_morale
 
 
 
 
-
-home()
+while True:
+    next_step, encounter_number = forest()
+    while next_step != "home":
+        if next_step == "forest_end":
+            next_step = forest_end()
+        elif next_step == "combat":
+            combat()
