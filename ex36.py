@@ -293,7 +293,7 @@ class enemy_class(object):
 
     def __init__(self, class_HP, class_AC, class_damage, class_morale):
         self.class_HP = class_HP
-        self.class_AC = class_AC
+        self.class_AC = class_A
         self.class_damage = class_damage
         self.class_morale = class_morale
 
