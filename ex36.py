@@ -257,7 +257,7 @@ def forest_end():
 def jungle():
     print "Jungle TK"
 def plains():
-    print "Plains TK" 
+    print "Plains TK"
 
 
 
@@ -270,6 +270,14 @@ def combat():
     # then we have combat simulation for those things, when their HP is reduced
     # to zero, we delete them from our combat dictionary. Learn regex to cleanly
     # reduce encounter results into numbers and strings for the actual encounter
+    HP = 3
+    HD = None
+    AC = 40
+    damage = 5
+    morale = 6
+    number = 2
+    encounter_number = 4
+    encounter = "monkey"
     print "Combat TK"
     print encounter_number
 
@@ -280,30 +288,38 @@ def combat():
     for enemy in range(0, encounter_number):
         if encounter_counter > 1:
             this_enemy = encounter + " %s" % str(encounter_counter)
+        else:
+            this_enemy = encounter
         if HD != None:
             HP = 0
             for x in range(0, HD):
                 HP += random.randint(1, 8)
         encounter_set[this_enemy] = enemy_class(HP, AC, damage, morale)
 
-    print encounter_set
+
+
+    print encounter_set["monkey"].class_AC
+    encounter_set["monkey"].class_AC -= 30
+    print encounter_set["monkey"].class_AC
     exit()
 
 class enemy_class(object):
 
     def __init__(self, class_HP, class_AC, class_damage, class_morale):
         self.class_HP = class_HP
-        self.class_AC = class_A
+        self.class_AC = class_AC
         self.class_damage = class_damage
         self.class_morale = class_morale
 
 
 
 
-while True:
-    next_step, encounter_number = forest()
-    while next_step != "home":
-        if next_step == "forest_end":
-            next_step = forest_end()
-        elif next_step == "combat":
-            combat()
+
+combat()
+# while True:
+#     next_step, encounter_number = forest()
+#     while next_step != "home":
+#         if next_step == "forest_end":
+#             next_step = forest_end()
+#         elif next_step == "combat":
+#             combat()
