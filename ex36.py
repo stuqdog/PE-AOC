@@ -315,7 +315,31 @@ class enemy_class(object):
 
 
 
-combat()
+## Okay, so we need a class that maps everything, and a class that is an engine
+## to run everything. The map will takes in an initial value, converts it to
+## an entry in a dictionary. The engine takes that value, and runs it.
+
+
+class map(object):
+
+    processes = {
+    "forest": "forest()",
+    "combat": combat()
+    }
+
+    def __init__(self, map_term):
+        self.map_term = map_term
+
+    def find_next_process(self):
+        return map.processes[self.map_term]
+
+test = map("forest")
+
+test_2 = test.find_next_process
+print test_2
+
+
+#combat()
 # while True:
 #     next_step, encounter_number = forest()
 #     while next_step != "home":
