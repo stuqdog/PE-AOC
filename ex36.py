@@ -6,11 +6,15 @@
 
 #TO DO: Convert this into classes. We can make a terrain class, a combat class,
 #etc. etc. Could be cleaned up nicely.
-    # Learn Regex.
+
     # Use classes and regex to create a clean combat option.
 
 
-import random
+## Variables used:
+## encounter_set = dictionary of enemies in current combat encounter
+
+
+from random import randint
 import string
 import re
 from sys import exit
@@ -32,9 +36,9 @@ What can I assist you with today?
             print "ERROR: please enter 1 or 2"
 
     if answer == "1":
-        terrain_check()
+        return "terrain_check"
     elif answer == "2":
-        combat()
+        return "combat"
 
 
 
@@ -52,22 +56,22 @@ def terrain_check():
         else:
             print "Error. Please enter a valid response."
     if answer_t == "1":
-        urban()
+        return "urban"
     elif answer_t == "2":
-        forest()
+        return "forest"
     elif answer_t == "3":
-        jungle()
+        return "jungle"
     elif answer_t == "4":
-        plains()
+        return "plains"
     elif answer_t == "5":
-        bathhouse()
+        return "bathhouse"
 
 
 def urban():
     with open('urban.txt') as f:
         i = len(f.readlines())
 
-    roll = random.randint(1, i)
+    roll = randint(1, i)
 
     with open('urban.txt') as f:
         for x in range(1, roll + 1):
@@ -90,7 +94,7 @@ def urban():
 
     encounter_number = 0
     for r in range(0, int(die_num)):
-        encounter_number += random.randint(1, int(die_size))
+        encounter_number += randint(1, int(die_size))
 
     if encounter_number > 1:
         print encounter_number, (result.lstrip("1234567890d")).lstrip()
@@ -102,9 +106,9 @@ def urban():
 def urban_end():
     next_step = raw_input("> ")
     if next_step == "ct":
-        terrain_check()
+        return "terrain_check"
     elif next_step == "combat":
-        combat()
+        return "combat",
     elif next_step == "home":
         home()
     elif next_step == "exit":
@@ -124,7 +128,7 @@ def bathhouse():
     with open('bathhouse.txt') as f:
         i = len(f.readlines())
 
-    roll = random.randint(1, i)
+    roll = randint(1, i)
 
     with open('bathhouse.txt') as f:
         for x in range(1, roll + 1):
@@ -148,7 +152,7 @@ def bathhouse():
 
     encounter_number = 0
     for r in range(0, int(die_num)):
-        encounter_number += random.randint(1, int(die_size))
+        encounter_number += randint(1, int(die_size))
 
     if encounter_number > 1:
         print encounter_number, (result.lstrip("1234567890d")).lstrip()
@@ -185,12 +189,12 @@ def forest():
     with open('forest.txt') as f:
         i = len(f.readlines())
 
-    roll = random.randint(1, i)
+    roll = randint(1, i)
 
     with open('forest.txt') as f:
         for x in range(1, roll + 1):
             result = f.readline().strip("\n")
-    print result
+
     # entry = re.match(r'''(\d*)d(\d*) (.*) <(H[D|P]): (\d*), AC: (\d*),
     # damage: (\d*)d(\d*), morale: (\*d)> .*''', result, re.I)
     test = '(\d*)d(\d*) (.*) <(H[D|P]): (\d*), AC: (\d*),'
@@ -206,23 +210,40 @@ def forest():
         elif entry.group(4) == "HD":
             HD = int(entry.group(5))
             HP = None
+
         AC = entry.group(6)
         damage = [int(entry.group(7)), int(entry.group(8))]
         morale = entry.group(9)
-        print die_num, die_size, encounter, AC, damage, morale
-        exit()
+
     else: print "ERROR"
 
     encounter_number = 0
     for r in range(0, int(die_num)):
-        encounter_number += random.randint(1, int(die_size))
+        encounter_number += randint(1, int(die_size))
 
     if encounter_number > 1:
         print encounter_number, (result.lstrip("1234567890d")).lstrip()
     else:
         print (result.lstrip("1234567890d")).lstrip()
-    forest_end()
 
+    while True:
+        next_step = raw_input("> ")
+        if next_step == "ct":
+            return "terrain_check"
+        elif next_step == "combat":
+            return "combat", encounter_number, encounter, HD, HP, AC, damage, morale
+        elif next_step == "home":
+            return "home"
+        elif next_step == "exit":
+            exit(0)
+        elif next_step == "help":
+            print""" ct: Change terrain
+     combat: combat
+     home: return home
+     exit: quit program
+     anything else: generate new urban encounter"""
+        else:
+            return "forest", None, None, None, None, None, None, None
 
 
 
@@ -239,7 +260,18 @@ def plains():
 
 
 
-def combat():
+class Encounter_Class(object):
+
+    def __init__(self, HD, HP, AC, damage, morale):
+        self.HD = HD
+        self.HP = HP
+        self.AC = AC
+        self.damage = damage
+        self.morale = morale
+
+
+def combat(encounter_number, encounter, HD, HP, AC, damage, morale):
+
     # We need to, when going to combat from an encounter, return the result from
     # that encounter. make that the template for combat, but let us replace it
     # if we want. Then use classes to turn it into enemies, and put those class
@@ -248,19 +280,52 @@ def combat():
     # then we have combat simulation for those things, when their HP is reduced
     # to zero, we delete them from our combat dictionary. Learn regex to cleanly
     # reduce encounter results into numbers and strings for the actual encounter
-    print "Combat TK"
+
+    encounter_set = {} ## this line should be moved down, so we can add new enemies mid-fight.
+    for i in range(0, encounter_number):
+        enemy_number = i + 1
+        enemy_number = str(enemy_number)
+        add_enemy = encounter.rstrip("s") + " " + enemy_number #%s" % str(i + 1)
+        print add_enemy
+        if HP == None:
+            specific_HP = 0
+            for x in range(0, HD):
+                specific_HP += randint(1, 8)
+        else:
+            specific_HP = HP
+        encounter_set[add_enemy] = Encounter_Class(HD, specific_HP, AC, damage, morale)
+
+    for enemy in encounter_set:
+        print encounter_set[enemy].HP
+
+    exit()
 
 
-class encounter(object):
-
-    def __init__(self, HP, AC, damage, morale):
-        self.HP = HP
-        self.AC = AC
-        self.damage = damage
-        self.morale = morale
 
 
+next_step = home()
 
+while True:
+    if next_step == "terrain_check":
+        next_step = terrain_check()
 
+    elif next_step == "home":
+        next_step = home()
 
-home()
+    elif next_step == "forest":
+        next_step, encounter_number, encounter, HD, HP, AC, damage, morale = forest()
+
+    elif next_step == "urban":
+        next_step, encounter_number, encounter, HD, HP, AC, damage, morale = urban()
+
+    elif next_step == "jungle":
+        next_step, encounter_number, encounter, HD, HP, AC, damage, morale = jungle()
+
+    elif next_step == "plains":
+        next_step, encounter_number, encounter, HD, HP, AC, damage, morale = plains()
+
+    elif next_step == "bathhouse":
+        next_step, encounter_number, encounter, HD, HP, AC, damage, morale = bathhouse()
+
+    elif next_step == "combat":
+        next_step = combat(encounter_number, encounter, HD, HP, AC, damage, morale)
