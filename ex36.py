@@ -269,6 +269,9 @@ class Encounter_Class(object):
         self.damage = damage
         self.morale = morale
 
+    def take_damage(self, damage_taken):
+        self.HP -= damage_taken
+
 
 def combat(encounter_number, encounter, HD, HP, AC, damage, morale):
 
@@ -283,20 +286,23 @@ def combat(encounter_number, encounter, HD, HP, AC, damage, morale):
 
     encounter_set = {} ## this line should be moved down, so we can add new enemies mid-fight.
     for i in range(0, encounter_number):
-        enemy_number = i + 1
-        enemy_number = str(enemy_number)
-        add_enemy = encounter.rstrip("s") + " " + enemy_number #%s" % str(i + 1)
+        add_enemy = encounter.rstrip("s") + " %s" % str(i + 1)
         print add_enemy
         if HP == None:
-            specific_HP = 0
+            enemy_specific_HP = 0
             for x in range(0, HD):
-                specific_HP += randint(1, 8)
+                enemy_specific_HP += randint(1, 8)
         else:
-            specific_HP = HP
-        encounter_set[add_enemy] = Encounter_Class(HD, specific_HP, AC, damage, morale)
+            enemy_specific_HP = HP
+        encounter_set[add_enemy] = Encounter_Class(HD, enemy_specific_HP,
+        AC, damage, morale)
 
     for enemy in encounter_set:
         print encounter_set[enemy].HP
+
+    # This makes sure combat continues as long as we have enemies left over.
+    while encounter_set != {}:
+        ## Make sure we do some combat stuff
 
     exit()
 
