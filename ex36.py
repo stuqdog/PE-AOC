@@ -17,110 +17,121 @@ from sys import exit
 encounter_number = 0
 
 
+class Feature(object):
 
-def home():
-    print """Welcome to the GM assistant!
+    def enter(self):
+        print "This feature is not yet implemented."
+        exit()
+
+
+class Home(Feature):
+
+    def enter(self):
+        print """Welcome to the GM assistant!
 What can I assist you with today?
   1. Random encounters
   2. Combat"""
 
-    while True:
-        answer = raw_input("> ")
-        if answer in ["1", "2"]:
-            break
-        else:
-            print "ERROR: please enter 1 or 2"
+        while True:
+            answer = raw_input("> ")
+            if answer in ["1", "2"]:
+                break
+            else:
+                print "ERROR: please enter 1 or 2"
 
-    if answer == "1":
-        return "terrain_check"
-    elif answer == "2":
-        return "combat"
-
-
-
-def terrain_check():
-    print """What kind of terrain are you dealing with?
-      1. Urban
-      2. Forest
-      3. Jungle
-      4. Plains
-      5. Miscellaneous (currently, the bathhouse)"""
-    while True:
-        answer_t = raw_input("> ")
-        if answer_t in ["1", "2", "3", "4", "5"]:
-            break
-        else:
-            print "Error. Please enter a valid response."
-    if answer_t == "1":
-        return "urban"
-        # urban()
-    elif answer_t == "2":
-        return "forest"
-        # forest()
-    elif answer_t == "3":
-        jungle()
-    elif answer_t == "4":
-        plains()
-    elif answer_t == "5":
-        return "bathhouse"
-        # bathhouse()
+        if answer == "1":
+            return "terrain_check"
+        elif answer == "2":
+            return "combat"
 
 
-def urban():
-    with open('urban.txt') as f:
-        i = len(f.readlines())
 
-    roll = randint(1, i)
+class terrain_check(Feature):
 
-    with open('urban.txt') as f:
-        for x in range(1, roll + 1):
-            result = f.readline().strip("\n")
+    def enter(self):
+        print """What kind of terrain are you dealing with?
+          1. Urban
+          2. Forest
+          3. Jungle
+          4. Plains
+          5. Miscellaneous (currently, the bathhouse)"""
+        while True:
+            answer_t = raw_input("> ")
+            if answer_t in ["1", "2", "3", "4", "5"]:
+                break
+            else:
+                print "Error. Please enter a valid response."
+        if answer_t == "1":
+            return "urban"
+            # urban()
+        elif answer_t == "2":
+            return "forest"
+            # forest()
+        elif answer_t == "3":
+            jungle()
+        elif answer_t == "4":
+            plains()
+        elif answer_t == "5":
+            return "bathhouse"
+            # bathhouse()
 
-    entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
-    if entry:
-        die_num = int(entry.group(1))
-        die_size = int(entry.group(2))
-        encounter = entry.group(3)
-    if not entry:
-        entry = re.match(r'(\d*) (.*?), ', result, re.I)
+
+class urban(Feature):
+
+    def enter(self):
+        with open('urban.txt') as f:
+            i = len(f.readlines())
+
+        roll = randint(1, i)
+
+        with open('urban.txt') as f:
+            for x in range(1, roll + 1):
+                result = f.readline().strip("\n")
+
+        entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
         if entry:
-            die_num, die_size = int(entry.group(1)), 1
-            encounter = entry.group(2)
-    if not entry:
-        entry = re.match(r'(.*?), ', result, re.I)
-        encounter = entry.group(1)
-        die_num, die_size = 1, 1
+            die_num = int(entry.group(1))
+            die_size = int(entry.group(2))
+            encounter = entry.group(3)
+        if not entry:
+            entry = re.match(r'(\d*) (.*?), ', result, re.I)
+            if entry:
+                die_num, die_size = int(entry.group(1)), 1
+                encounter = entry.group(2)
+        if not entry:
+            entry = re.match(r'(.*?), ', result, re.I)
+            encounter = entry.group(1)
+            die_num, die_size = 1, 1
 
-    encounter_number = 0
-    for r in range(0, int(die_num)):
-        encounter_number += randint(1, int(die_size))
+        encounter_number = 0
+        for r in range(0, int(die_num)):
+            encounter_number += randint(1, int(die_size))
 
-    if encounter_number > 1:
-        print encounter_number, (result.lstrip("1234567890d")).lstrip()
-    else:
-        print (result.lstrip("1234567890d")).lstrip()
-    urban_end()
+        if encounter_number > 1:
+            print encounter_number, (result.lstrip("1234567890d")).lstrip()
+        else:
+            print (result.lstrip("1234567890d")).lstrip()
+        # urban_end()
 
+        while True:
 
-def urban_end():
-    next_step = raw_input("> ")
-    if next_step == "ct":
-        terrain_check()
-    elif next_step == "combat":
-        combat()
-    elif next_step == "home":
-        home()
-    elif next_step == "exit":
-        exit(0)
-    elif next_step == "help":
-        print""" ct: Change terrain
- combat: combat
- home: return home
- exit: quit program
- anything else: generate new urban encounter"""
-        urban_end()
-    else:
-        urban()
+            next_step = raw_input("> ")
+            if next_step == "ct":
+                return "terrain_check"
+            elif next_step == "combat":
+                return "combat", encounter, encounter_number                    ## NEED TO ADD MORE HERE
+            elif next_step == "home":
+                return "home"
+            elif next_step == "exit":
+                exit(0)
+            elif next_step == "help":
+                print""" ct: Change terrain
+            combat: combat
+            home: return home
+            exit: quit program
+            anything else: generate new urban encounter"""
+            else:
+                return "urban"
 
 
 def bathhouse():
@@ -325,45 +336,66 @@ class enemy_class(object):
 class map(object):
 
     processes = {
-    "home": home(),
-    "forest": forest(),
+    "home": Home(),
+    # "forest": forest(),
     "urban": urban(),
-    "jungle": jungle(),
-    "plains": plains(),
-    "bathhouse": bathhouse(),
+    # "jungle": jungle(),
+    # "plains": plains(),
+    # "bathhouse": bathhouse(),
     "terrain_check": terrain_check(),
-    "combat": combat(encounter, HD, AC, damage, morale, encounter_number)
+    # "combat": combat(encounter, HD, AC, damage, morale, encounter_number)
 
     }
 
     def __init__(self, map_term):
         self.map_term = map_term
 
-    def convert_next_process(self, map_entry):
-        val = map.processes.get(map_entry)
-        return val
 
-    def find_next_process(self):
+    def find_next_process(self, thing):
         #return map.processes[self.map_term]
-        return self.convert_next_process(self.map_term)
+        return map.processes.get(self.thing)
+
+    def enter_process(self, next_scene):
+        current_scene = "home"
+        while True:
+            if current_scene in ['home', 'terrain_check']:
+                current_scene = map.find_next_proccess(next_step)
+                next_step = current_scene.enter()
+
+            elif next_step.map_term in ['forest', 'urban', 'jungle',
+            'plains', 'bathhouse']:
+                (next_step, encounter, HD, AC, damage,
+                morale, encounter_number) = map.find_next_process(next_step)
+            elif next_step.map_term == "combat":
+                combat(encounter, HD, AC,
+                damage, morale, encounter_number)
 
 # encounter, HD, AC, damage, morale, encounter_number = map("forest")
 # print test.map_term
 
 #next_step = map("home")
 
-while True:
-    next_step = next_step.map_term
-    print next_step
-    exit()
-    if next_step.map_term in ['home', 'terrain_check']:
-        next_step = map.find_next_process(next_step.map_term)
-    elif next_step.map_term in ['forest', 'urban', 'jungle',
-    'plains', 'bathhouse']:
-        next_step, encounter, HD, AC, damage, morale, encounter_number = map.find_next_process(next_step)
-    elif next_step.map_term == "combat":
-        combat(encounter, HD, AC,
-        damage, morale, encounter_number)
+test = map("home")
+test.enter_process("home")
+
+
+class Engine(object):
+
+    def __init__(self, party):
+        self.party = party
+
+    # def enter_process(self):
+    #     while True:
+    #         if self.party.map_term in ['home', 'terrain_check']:
+    #             next_feature = map.find_next_process(next_step.map_term)
+    #             next_step = next_feature.enter()
+    #         elif next_step.map_term in ['forest', 'urban', 'jungle',
+    #         'plains', 'bathhouse']:
+    #             (next_step, encounter, HD, AC, damage,
+    #             morale, encounter_number) = map.find_next_process(next_step)
+    #         elif next_step.map_term == "combat":
+    #             combat(encounter, HD, AC,
+    #             damage, morale, encounter_number)
 #home()
 # test_2 = test.find_next_process(test.map_term)
 # print test_2
