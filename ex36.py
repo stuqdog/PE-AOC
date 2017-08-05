@@ -300,8 +300,9 @@ def combat(encounter_number, encounter, HD, HP, AC, damage, morale):
     for enemy in encounter_set:
         print encounter_set[enemy].HP
 
-    # This makes sure combat continues as long as we have enemies left over.
+    ## This makes sure combat continues as long as we have enemies left over.
     while encounter_set != {}:
+        pass
         ## Make sure we do some combat stuff
 
     exit()
