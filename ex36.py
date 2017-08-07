@@ -8,10 +8,12 @@
 #etc. etc. Could be cleaned up nicely.
 
     # Use classes and regex to create a clean combat option.
+    # Convert scenes to classes. Create a map and an engine
 
 
 ## Variables used:
 ## encounter_set = dictionary of enemies in current combat encounter
+
 
 
 from random import randint
@@ -20,6 +22,7 @@ import re
 from sys import exit
 
 
+class Engine(object):
 
 
 def home():
