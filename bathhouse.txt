@@ -1,5 +1,5 @@
-1d3 Bathhouse employee, single, f, carrying (1. soap, 2. water, 3. flammable perfume)
-Suratha, a human champion who kills vampires when outside the bathhouse. Reacts to commotion.
+1d3 Bathhouse employee <HD: 1, AC: 10, damage: 1d2, morale: 4>, single, f, carrying (1. soap, 2. water, 3. flammable perfume)
+Suratha <HD: 8, AC: 13, damage: 3d4, morale: 8>, a human champion who kills vampires when outside the bathhouse. Reacts to commotion.
 Valdin Kyr, cleric of Church of the Domestic. Looking for her sister Sally (in a well two squares east).
 Little Yasa, looking to hook up. She’s from an Orb to the North, saves up to come here.
 Boola and Thasp, orphan girls from large orb to the north. They want to be adventurers, heard Tanarhh the Thief comes here sometimes.
