@@ -9,10 +9,22 @@
     # Use classes and regex to create a clean combat option.
     # Convert scenes to classes.
 
+#************
     # Combat should work differently from other features, because it has to
     # take in the encounter stats. Can we put that in our map class, or do we
     # need an exception on the engine class? Should experiment with this to
-    # find out. 
+    # find out.
+
+    # Looks like the answer is no, since the combat_stats variable won't be
+    # defined within the map. So, we make an exception in the engine. This is
+    # good go know, because it means with enough exceptions, it's probably best
+    # to just put the mapping into the Engine class. Alternatively, could we
+    # stick the combat_stats var into the Map somehow? Hmm. Probably not, since
+    # it's not defined yet. Unless it was in an __init__?? That seems kinda
+    # complicated though, probably best to hold off on figuring that out until
+    # you have to.
+#************
+
 
     # Currently, the Engine play is too simple, doesn't account for
     # potentially needing to return different vars/different number of vars.
@@ -49,12 +61,13 @@ class Engine(object):
 
     def play(self):
         next_feature_name = self.feature_map.starting_feature()
+        current_feature = "home"
 
         while True:
             # Is this necessary? Can we put this in our dict in the map class
             # instead, make it combat(encounter_stats) instead of combat()?
             if current_feature == "combat":
-                print "go into combat"
+                current_feature, combat_stats = Combat(combat_stats).enter()
             else:
                 current_feature, combat_stats = next_feature_name.enter()
             next_feature_name = self.feature_map.next_feature(current_feature)
@@ -127,63 +140,6 @@ class Miscellaneous(Feature):
 
     def enter(self):
         return ex36RE.miscellaneous()
-    # with open('bathhouse.txt') as f:
-    #     i = len(f.readlines())
-    #
-    # roll = randint(1, i)
-    #
-    # with open('bathhouse.txt') as f:
-    #     for x in range(1, roll + 1):
-    #         result = f.readline().strip("\n")
-    #
-    # entry = re.match(r'(\d*)d(\d*) (.*?),', result, re.I)
-    # if entry:
-    #     die_num = int(entry.group(1))
-    #     die_size = int(entry.group(2))
-    #     encounter = entry.group(3)
-    # if not entry:
-    #     entry = re.match(r'(\d+) (.*?), ', result, re.I)
-    #     if entry:
-    #         die_num = int(entry.group(1))
-    #         die_size = 1
-    #         encounter = entry.group(2)
-    # if not entry:
-    #     entry = re.match(r'(.*?), ', result, re.I)
-    #     encounter = entry.group(1)
-    #     die_num, die_size = 1, 1
-    #
-    # encounter_number = 0
-    # for r in range(0, int(die_num)):
-    #     encounter_number += randint(1, int(die_size))
-    #
-    # if encounter_number > 1:
-    #     print encounter_number, (result.lstrip("1234567890d")).lstrip()
-    # else:
-    #     print (result.lstrip("123456789d")).lstrip()
-    # bathhouse_end()
-
-
-
-# def bathhouse_end():
-#     next_step = raw_input("> ")
-#     if next_step == "ct":
-#         terrain_check()
-#     elif next_step == "combat":
-#         combat()
-#     elif next_step == "home":
-#         home()
-#     elif next_step == "exit":
-#         exit(0)
-#     elif next_step == "help":
-#         print""" ct: Change terrain
-#  combat: combat
-#  home: return home
-#  exit: quit program
-#  anything else: generate new urban encounter"""
-#         bathhouse_end()
-#     else:
-#         bathhouse()
-
 
 
 
@@ -197,6 +153,8 @@ class Forest(Feature):
 class Jungle(Feature):
     pass
     # print "Jungle TK"
+
+
 class Plains(Feature):
     pass
     # print "Plains TK"
@@ -218,10 +176,24 @@ class Encounter_Class(object):
 
 class Combat(Feature):
 
-    def __init__(self, combat_stats):
-        self.combat_stats = combat_stats
-    def enter(self):
+    ## THIS IS HELLA CLUNKY AND GETTING GROSS. Figure out how to use the
+    ## encounter_class class to make it easier. Might be good to make use of
+    ## super in there?
 
+    def __init__(self, combat_stats):
+        self.encounter_total = {}
+        self.encounter_name = self.combat_stats[encounter_name]
+        if self.combat_stats[encounter_number] == 1:
+            self.encounter_total[self.]
+        for i in range(0, combat_stats[encounter_number]):
+            self.encounter_total.append()
+
+        self.combat_stats = combat_stats
+
+    def enter(self):
+        print "we made it! :D"
+        print self.combat_stats
+        exit()
 
     # We need to, when going to combat from an encounter, return the result from
     # that encounter. make that the template for combat, but let us replace it
@@ -231,7 +203,7 @@ class Combat(Feature):
     # then we have combat simulation for those things, when their HP is reduced
     # to zero, we delete them from our combat dictionary. Learn regex to cleanly
     # reduce encounter results into numbers and strings for the actual encounter
-    pass
+        pass
     # encounter_number, encounter, HD, HP, AC, damage, morale
     # encounter_set = {} ## this line should be moved down, so we can add new enemies mid-fight.
     # for i in range(0, encounter_number):
@@ -266,7 +238,7 @@ class Map(object):
     "plains": Plains(),
     "jungle": Jungle(),
     "misc": Miscellaneous(),
-    "combat": Combat(),
+    "combat": Combat({}),
     "home": Home(),
     "terrain_check": Terrain_Check()
     }

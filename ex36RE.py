@@ -32,7 +32,7 @@ def forest():
     if entry:
         die_num = int(entry.group(1))
         die_size = int(entry.group(2))
-        encounter = entry.group(3)
+        encounter_name = entry.group(3)
         if entry.group(4) == "HP":
             HP = int(entry.group(5))
             HD = 0
@@ -63,7 +63,7 @@ def forest():
     combat_stats = {
         'stat_dump': stat_dump,
         'encounter_number': encounter_number,
-        'encounter': encounter,
+        'encounter_name': encounter_name,
         'HP': HP,
         'HD': HD,
         'AC': AC,
@@ -111,16 +111,16 @@ def miscellaneous():
     if entry:
         die_num = int(entry.group(1))
         die_size = int(entry.group(2))
-        encounter = entry.group(3)
+        encounter_name = entry.group(3)
     if not entry:
         entry = re.match(r'(\d+) (.*?), ', result, re.I)
         if entry:
             die_num = int(entry.group(1))
             die_size = 1
-            encounter = entry.group(2)
+            encounter_name = entry.group(2)
     if not entry:
         entry = re.match(r'(.*?), ', result, re.I)
-        encounter = entry.group(1)
+        encounter_name = entry.group(1)
         die_num, die_size = 1, 1
 
     encounter_number = 0
@@ -134,7 +134,7 @@ def miscellaneous():
 
     combat_stats = {
         "encounter_number": encounter_number,
-        "encounter": encounter
+        "encounter_name": encounter_name
     }
 
     while True:
