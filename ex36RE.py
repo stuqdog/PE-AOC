@@ -85,10 +85,11 @@ def forest():
             exit(0)
         elif next_step == "help":
             print""" ct: Change terrain
-     combat: combat
-     home: return home
-     exit: quit program
-     anything else: generate new forest encounter"""
+ combat: combat
+ home: return home
+ exit: quit program
+ stats: view generic encounter stats
+ anything else: generate new forest encounter"""
         else:
             return "forest", combat_stats
 
@@ -149,10 +150,11 @@ def miscellaneous():
             exit(0)
         elif next_step == "help":
             print""" ct: Change terrain
-     combat: combat
-     home: return home
-     exit: quit program
-     anything else: generate new urban encounter"""
+ combat: combat
+ home: return home
+ exit: quit program
+ stats: view generic encounter stats
+ anything else: generate new urban encounter"""
         else:
             return "misc", combat_stats
 
