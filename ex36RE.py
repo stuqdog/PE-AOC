@@ -10,6 +10,17 @@ from random import randint
 import re
 
 
+def urban():
+    pass
+
+def jungle():
+    return "home", "blah"
+    pass
+
+def plains():
+    pass
+
+
 def forest():
     with open('forest.txt') as f:
         i = len(f.readlines())
@@ -40,9 +51,9 @@ def forest():
             HD = int(entry.group(5))
             HP = 0
 
-        AC = entry.group(6)
+        AC = int(entry.group(6))
         damage = [int(entry.group(7)), int(entry.group(8))]
-        morale = entry.group(9)
+        morale = int(entry.group(9))
 
 
     else:
@@ -60,6 +71,7 @@ def forest():
     else:
         print re.sub(stat_dump, '',
                     (result.lstrip("1234567890d")).lstrip())
+        encounter_name = encounter_name.rstrip('s')
     combat_stats = {
         'stat_dump': stat_dump,
         'encounter_number': encounter_number,
@@ -94,8 +106,7 @@ def forest():
             return "forest", combat_stats
 
 
-def urban():
-    pass
+
 
 def miscellaneous():
     with open('bathhouse.txt') as f:
@@ -157,10 +168,3 @@ def miscellaneous():
  anything else: generate new urban encounter"""
         else:
             return "misc", combat_stats
-
-def jungle():
-    return "home", "blah"
-    pass
-
-def plains():
-    pass
