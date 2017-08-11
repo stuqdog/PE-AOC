@@ -14,9 +14,15 @@
     #    using only what we have been provided by the random encounter table.
     # 4. Find out if we need to return combat_stats from combat in the Engine.
     # 5. Create settings to have NPCs attack the PCs.
-    # 6. Around line 195 or so, when you calculate damage taken, should give
-    #    the option to randomize it based on rolls. Regex to read for an #d#
-    #    format entry.
+    # 6. Get comfortable with exceptions and stuff, so we can have the program
+    #    remind the user to enter a proper value if they enter text where an
+    #    int is called for.
+    # 7. Randomize weapons! Give enemies the option to use different weapons
+    #    and import weapon stuff from Courtney's thing.
+    #       If you want to go all-out, can limit types of weapons a class or
+    #       encounter can possibly use.
+    # 8. This might be cleaner if we offload some of the combat methods into
+    #    a new file that we can import (call it ex36combat.py).
 
 #************
     # Combat should work differently from other features, because it has to
@@ -47,10 +53,11 @@
 
 
 from random import randint
+from sys import exit
 import string
 import re
 import ex36RE
-from sys import exit
+import ex36combat
 
 class Feature(object):
 
@@ -75,7 +82,7 @@ class Engine(object):
         while True:
             # Do we need to return combat_stats from combat? probably not.
             if current_feature == "combat":
-                current_feature, combat_stats = Combat(combat_stats).enter()
+                current_feature = Combat(combat_stats).enter()
             else:
                 current_feature, combat_stats = next_feature_name.enter()
             next_feature_name = self.feature_map.next_feature(current_feature)
@@ -105,7 +112,7 @@ What can I assist you with today?
 
 
 
-class Terrain_Check(Feature):
+class TerrainCheck(Feature):
 
     def enter(self):
 
@@ -169,9 +176,8 @@ class Plains(Feature):
 
 
 
-class Combat_Enemy(object):
+class CombatEnemy(object):
 
-#this creates individual enemies as instances of the combat_enemy class.
     def __init__(self, combat_stats):
         self.damage_taken = 0
         self.HD = combat_stats['HD']
@@ -186,24 +192,49 @@ class Combat_Enemy(object):
         self.morale = combat_stats['morale']
 
     def attacked(self, to_hit_roll):
-        print "AC: %d" % self.AC
+
+        attack_hit = False
+        crit_hit = 1
+
         if to_hit_roll == 1:
             print "CRITICAL FAILURE"
             print "What happens now? Details TK"
+            return False
         elif to_hit_roll == 20:
             print "CRITICAL HIT!!"
             print "Double damage, this needs to be implemented."
+            attack_hit, crit_hit = True, 2
         elif to_hit_roll >= self.AC:
             print "You hit!"
-            damage_suffered = int(raw_input("Damage?\n> "))
-            self.damage_taken += damage_suffered
+            attack_hit = True
+
+        if attack_hit == True:
+            damage_suffered = raw_input("Damage?\n> ")
+            damage_check = re.match("(\d*)d?(\d*)?( )?(\+|\-)?( )?(\d*)?",
+                                    damage_suffered, re.I)
+            if damage_check.group(2):
+                for i in range(0, crit_hit * int(damage_check.group(1))):
+                    self.damage_taken += randint(1, int(damage_check.group(2)))
+                if damage_check.group(4) == "+":
+                    self.damage_taken += crit_hit * int(damage_check.group(6))
+                elif damage_check.group(4) == "-":
+                    self.damage_taken -= crit_hit * int(damage_check.group(6))
+            else:
+                self.damage_taken += crit_hit * int(damage_suffered)
         else:
             print "YOU MISSED!"
 
+## This is returning an enemy_defeated value. We can remove enemies from the
+## encounter as they are defeated.
         if self.damage_taken > self.HP:
-            return False
-        else:
             return True
+        else:
+            return False
+
+    def attacking(self):
+        # This is how we'll attack the party.
+        pass
+
 
 
 class Combat(Feature):
@@ -223,16 +254,14 @@ class Combat(Feature):
         self.encounter_name = combat_stats['encounter_name']
         if combat_stats['encounter_number'] == 1:
             self.encounter_total[self.encounter_name] = (
-                Combat_Enemy(combat_stats))
+                CombatEnemy(combat_stats))
             self.encounter_print.append(self.encounter_name)
         else:
             for i in range(1, combat_stats['encounter_number'] + 1):
                 this_enemy = (combat_stats['encounter_name']
                               + " %s" % str(i))
-                print this_enemy
-                self.encounter_total[this_enemy] = Combat_Enemy(combat_stats)
+                self.encounter_total[this_enemy] = CombatEnemy(combat_stats)
                 self.encounter_print.append(this_enemy)
-                print self.encounter_total[this_enemy].HP
 
 
 
@@ -280,10 +309,13 @@ It's combat time! Whose turn is it?
                     exit()
 
                 elif option == "list" or option == "list enemies":
-                    enemy_number = 1
                     for enemy in self.encounter_print:
                         print "%d. %s" % (enemy_number, enemy)
                         enemy_number += 1
+                    enemy_number = 1
+
+                elif option == "home":
+                    return "home"
 
                 elif "attack" in option:
                     # groups 1 and 3 are fluff, groups 2 and 4 are the target
@@ -304,33 +336,19 @@ It's combat time! Whose turn is it?
 
                     # this checks to see if we've killed the enemy, and removes
                     # them from the dict if we have.
-                    enemy_alive = self.encounter_total[
+                    enemy_defeated = self.encounter_total[
                         self.encounter_print[target]].attacked(to_hit_roll)
-                    if enemy_alive == False:
+                    if enemy_defeated == True:
                         print "ENEMY DEAD"
                         del self.encounter_total[self.encounter_print[target]]
                         del self.encounter_print[target]
                         exit()
 
             elif side == "NPC":
+                print "THIS IS NOT YET IMPLEMENTED."
                 pass
                 ## NEED TO FILL THIS IN
 
-
-
-
-
-
-
-
-    # We need to, when going to combat from an encounter, return the result from
-    # that encounter. make that the template for combat, but let us replace it
-    # if we want. Then use classes to turn it into enemies, and put those class
-    # occurrences in a dictionary. class features are HP, damage, AC, to hit,
-    # maybe spells, for casters, maybe a way to capture unique abilities?
-    # then we have combat simulation for those things, when their HP is reduced
-    # to zero, we delete them from our combat dictionary. Learn regex to cleanly
-    # reduce encounter results into numbers and strings for the actual encounter
 
 
 
@@ -350,7 +368,7 @@ class Map(object):
     "misc": Miscellaneous(),
     "combat": Combat(starting_combat_stats),
     "home": Home(),
-    "terrain_check": Terrain_Check()
+    "terrain_check": TerrainCheck()
     }
 
     def __init__(self, initial_feature):
