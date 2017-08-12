@@ -1,10 +1,4 @@
-# random encounter program
-# write initial section: giving options about terrain, etc
-# write terrain-specific sections, give option to change from night to day, etc.
-# build in option to move directly from somewhere to home, or to forest,
-# or to plains, etc.
-
-#TO DO:
+# TO DO:
 
     # 1. Use classes and regex to create a clean combat option.
     # 2. Make it so we can add new enemies in combat. If we want to do that, we
@@ -41,14 +35,8 @@
 #************
 
 
-    # Currently, the Engine play is too simple, doesn't account for
-    # potentially needing to return different vars/different number of vars.
-        # this should be solved by putting stats into a dictionary.
-    # PUT COMBAT STATS FOR GENERATING ENEMIES INTO A DICTIONARY!!!
-
-
 ## Variables used:
-## encounter_set = dictionary of enemies in current combat encounter
+##   encounter_total = dictionary of enemies in current combat encounter
 
 
 
@@ -190,9 +178,11 @@ class CombatEnemy(object):
         self.AC = combat_stats['AC']
         self.damage = combat_stats['damage']
         self.morale = combat_stats['morale']
+        self.morale_pass = True
+        self.morale_check_number = 0
 
     def attacked(self, to_hit_roll):
-
+## This implements attacks against the encounter_total group.
         attack_hit = False
         crit_hit = 1
 
@@ -226,6 +216,7 @@ class CombatEnemy(object):
 
 ## This is returning an enemy_defeated value. We can remove enemies from the
 ## encounter as they are defeated.
+
         if self.damage_taken > self.HP:
             return True
         else:
@@ -234,6 +225,9 @@ class CombatEnemy(object):
     def attacking(self):
         # This is how we'll attack the party.
         pass
+
+    def morale_check(self):
+        # this is for checking morale.
 
 
 
@@ -252,6 +246,7 @@ class Combat(Feature):
         self.encounter_total = {}
         self.encounter_print = []
         self.encounter_name = combat_stats['encounter_name']
+        self.encounter_number = combat_stats['encounter_number']
         if combat_stats['encounter_number'] == 1:
             self.encounter_total[self.encounter_name] = (
                 CombatEnemy(combat_stats))
@@ -286,8 +281,7 @@ It's combat time! Whose turn is it?
             side = 'NPC'
 
 
-
-        while self.encounter_total != {}:
+        while self.encounter_total != {}
 
             for enemy in self.encounter_print:
                 print "%d. %s (%d/%d)" % (enemy_number,
@@ -296,6 +290,20 @@ It's combat time! Whose turn is it?
                     - self.encounter_total[enemy].damage_taken,
                     self.encounter_total[enemy].HP)
                 enemy_number += 1
+            encounter_remaining = enemy_number
+
+        # this triggers morale check as long as we haven't done two already.
+        # HUH. This is gonna be tough. We can't just return that an enemy has
+        # failed a morale check, because then we leave. We'll have to set a
+        # self.morale_check variable, and change it to false for an encounter
+        # if that encounter failed morale. Then, if it's false, the encounter
+        # bails. Should also consider where the best place to position this
+        # check is. The actual code to do the morale check will go in the
+        # CombatEnemy class.
+            if (encounter_remaining < self.encounter_number / 2 and
+                  morale_check < 2):
+                for enemy in self.encounter_total:
+                    enemy.morale_check
 
             if side == 'PC':
                 print "---\n"
