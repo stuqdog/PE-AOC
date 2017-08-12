@@ -29,19 +29,9 @@
 
 from sys import exit
 
-starting_map_features = {
-    'h_chip': 1,
-    'h_gen': 2,
-    'l_chip': 1,
-    'l_gen': 3,
-    'elevator': 1,
-    'steps_taken': 0,
-    'previous_states': [],
-    'movable_object_list': []
-}
+
 step_number = 0
 
-legal_next_steps = []
 previous_positions = []
 
 
@@ -59,10 +49,10 @@ class Map(object):
         self.pr_gen = pr_gen
         self.ru_chip = ru_chip
         self.ru_gen = ru_gen
+        self.elevator = elevator
         self.item_list = [self.th_chip, self.th_gen, self.pl_chip, self.pl_gen,
                           self.st_chip, self.st_gen, self.pr_chip, self.pr_gen,
-                          self.ru_chip, self.ru_gen]
-        self.elevator = elevator
+                          self.ru_chip, self.ru_gen, self.elevator]
 
 
 
@@ -93,11 +83,11 @@ class Map(object):
 current_move_positions = [Map(1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1)]
 
 
-while True:
+
+while step_number < 9:
     # all this is creating objects of potential future positions
     print step_number
     legal_next_steps = []
-
     for position in current_move_positions:
         success = True
         for item in position.item_list:
@@ -125,15 +115,17 @@ while True:
                         'st_gen', 'pr_chip', 'pr_gen', 'ru_chip', 'ru_gen']
 
         movable_object_list = []
+        # temporary storage of movable two-item combos, so we don't amend
+        # movable_object_list while we're reading from it.
         duo_object_temp = []
 
 
-        for x in range(0, len(this_map_layout)):
+        for x in xrange(0, len(this_map_layout)):
             if this_map_layout[x] == position.elevator:
                 movable_object_list.append(object_names[x])
 
-        for x in range(0, len(movable_object_list)):
-            for y in range(x + 1, len(movable_object_list)):
+        for x in xrange(0, len(movable_object_list)):
+            for y in xrange(x + 1, len(movable_object_list)):
                 duo = movable_object_list[x] + " " + movable_object_list[y]
                 duo_object_temp.append(duo)
 
@@ -161,14 +153,17 @@ while True:
                     new_layout[7], new_layout[8], new_layout[9],
                     position.elevator + 1)
                 legal = test.legality_check()
-                repeat_test = ''
-                for item in test.item_list:
-                    repeat_test += str(item)
-                if repeat_test in previous_positions:
-                    legal = False
-                # if test not in previous_positions and legal == True:
-                if legal == True:
-                    legal_next_steps.append(test)
+                if legal == False:
+                    pass
+                else:
+                    repeat_test = ''
+                    for item in test.item_list:
+                        repeat_test += str(item)
+
+
+                    if repeat_test not in previous_positions and legal == True:
+
+                        legal_next_steps.append(test)
 
         if position.elevator == 1:
             pass
@@ -188,32 +183,24 @@ while True:
                     new_layout[7], new_layout[8], new_layout[9],
                     position.elevator - 1)
                 legal = test.legality_check()
-                repeat_test = ''
-                for item in test.item_list:
-                    repeat_test += str(item)
-                if repeat_test in previous_positions:
-                    legal = False
-                if legal == True:
-                # if legal == True:
-                    legal_next_steps.append(test)
+                if legal == False:
+                    pass
+                else:
+                    repeat_test = ''
+                    for item in test.item_list:
+                        repeat_test += str(item)
 
 
-        prev_position = ''
+
+
+                    if repeat_test not in previous_positions and legal == True:
+
+                        legal_next_steps.append(test)
+
+
+        prev_position_str = ''
         for item in position.item_list:
-            prev_position += str(item)
-        previous_positions.append(prev_position)
+            prev_position_str += str(item)
+        previous_positions.append(prev_position_str)
     current_move_positions = legal_next_steps
     step_number += 1
-
-
-
-
-
-        # if position.h_chip == position.elevator:
-        #     movable_object_list.append('h_chip')
-        # if position.h_gen == position.elevator:
-        #     movable_object_list.append('h_gen')
-        # if position.l_chip == position.elevator:
-        #     movable_object_list.append('l_chip')
-        # if position.l_gen == position.elevator:
-        #     movable_object_list.append('l_gen')
