@@ -1,15 +1,10 @@
 from sys import exit
 
 
-step_number = 0
-previous_positions = []
-object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
-                'st_gen', 'pr_chip', 'pr_gen', 'ru_chip', 'ru_gen']
-
-
 class Map(object):
-## variables: th, pl, st, pr, ru, with chip and gen variables. also: elevator
+
     def __init__(self, item_floor):
+## item_floor vars: see object_names below. also: elevator at [-1] position.
         self.item_floor = item_floor
 
 
@@ -38,12 +33,15 @@ class Map(object):
         else:
             return True
 
+# starting_positions and object_names entries correlate to one another.
 
-# entries in the list that goes into a class correspond to the variables as
-# listed in object_names (below)
+object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
+                'st_gen', 'pr_chip', 'pr_gen', 'ru_chip', 'ru_gen']
 starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
 current_move_positions = [Map(starting_positions)]
 previous_positions = [Map(starting_positions)]
+step_number = 0
+previous_positions = []
 
 while True:
 
@@ -62,7 +60,6 @@ while True:
             exit()
 
 
-
         movable_object_list = []
         duo_object_temp_storage = []
 
@@ -79,8 +76,7 @@ while True:
             movable_object_list.append(item)
 
 
-        # check to see what legal moves by going up the elevator exist.
-        # if elevator == 4, then we're at the top floor, so no need to check.
+# Legal moves going up. If elevator == 4 then we're already at the top.
         if position.item_floor[10] < 4:
             for item in movable_object_list:
 
@@ -103,8 +99,7 @@ while True:
                     previous_positions.append(new_layout)
 
 
-        # possible moves going down. If elevator == 1, we're at bottom floor,
-        # so no need to check.
+# Legal moves going down. If elevator == 1 then we're already at bottom floor.
         if position.item_floor[10] > 1:
             for item in movable_object_list:
 
@@ -123,8 +118,7 @@ while True:
                     pass
                 elif new_layout not in previous_positions:
                     legal_next_steps.append(test)
-                    previous_positions.append(new_layout) # NEW
-
+                    previous_positions.append(new_layout)
 
 
     current_move_positions = legal_next_steps
