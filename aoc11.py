@@ -1,3 +1,142 @@
+from sys import exit
+
+
+step_number = 0
+
+previous_positions = []
+
+
+class Map(object):
+## variables: th, pl, st, pr, ru, with chip and gen variables. also: elevator
+    def __init__(self, item_floor):
+        self.item_floor = item_floor
+
+
+    def legality_check(self):
+        """This checks to see if a state is legal, and returns False if not"""
+        if (self.item_floor[0] != self.item_floor[1]) and (self.item_floor[0]
+            in [self.item_floor[3], self.item_floor[5], self.item_floor[7],
+            self.item_floor[9]]):
+            return False
+        elif (self.item_floor[2] != self.item_floor[3]) and (self.item_floor[2]
+            in [self.item_floor[1], self.item_floor[5], self.item_floor[7],
+            self.item_floor[9]]):
+            return False
+        elif (self.item_floor[4] != self.item_floor[5]) and (self.item_floor[5]
+            in [self.item_floor[3], self.item_floor[1], self.item_floor[7],
+            self.item_floor[9]]):
+            return False
+        elif (self.item_floor[6] != self.item_floor[7]) and (self.item_floor[6]
+            in [self.item_floor[3], self.item_floor[5], self.item_floor[1],
+            self.item_floor[9]]):
+            return False
+        elif (self.item_floor[8] != self.item_floor[9]) and (self.item_floor[8]
+            in [self.item_floor[3], self.item_floor[5], self.item_floor[7],
+            self.item_floor[1]]):
+            return False
+        else:
+            return True
+
+
+# entries in the list that goes into a class correspond to the variables as
+# listed in object_names (below)
+starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
+
+object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
+                'st_gen', 'pr_chip', 'pr_gen', 'ru_chip', 'ru_gen']
+
+current_move_positions = [Map(starting_positions)]
+
+
+
+while step_number < 9:
+
+    print step_number
+    legal_next_steps = []
+
+    for position in current_move_positions:
+        success = True
+        # check to see if any given position is a winner.
+        for item in position.item_floor:
+            if item != 4:
+                success = False
+                break
+        if success == True:
+            print step_number
+            exit()
+
+
+        # movable object list is what single or double item combos are on the
+        # same floor as the elevator
+        movable_object_list = []
+        # temporary storage of movable two-item combos, so we don't amend
+        # movable_object_list while we're reading from it.
+        duo_object_temp = []
+
+
+        for x in xrange(0, 10):
+            if position.item_floor[x] == position.item_floor[10]:
+                movable_object_list.append(object_names[x])
+
+        for x in xrange(0, len(movable_object_list)):
+            for y in xrange(x + 1, len(movable_object_list)):
+                duo = movable_object_list[x] + " " + movable_object_list[y]
+                duo_object_temp.append(duo)
+
+        for item in duo_object_temp:
+            movable_object_list.append(item)
+
+
+        # check to see what legal moves by going up the elevator exist.
+        # if elevator == 4, then we're at the top floor, so no need to check.
+        if position.item_floor[10] < 4:
+            for item in movable_object_list:
+
+                new_layout = []
+                for i in position.item_floor:
+                    new_layout.append(i)
+
+                for x in xrange(0, len(object_names)):
+                    if object_names[x] in item:
+                        new_layout[x] += 1
+
+                new_layout[10] += 1
+                test = Map(new_layout)
+                legal = test.legality_check()
+
+                if legal == False:
+                    pass
+                elif new_layout not in previous_positions:
+                    legal_next_steps.append(test)
+
+        # possible moves going down. If elevator == 1, we're at bottom floor,
+        # so no need to check.
+        if position.item_floor[10] > 1:
+            for item in movable_object_list:
+
+                new_layout = []
+                for i in position.item_floor:
+                    new_layout.append(i)
+
+                for x in xrange(0, len(object_names)):
+                    if object_names[x] in item:
+                        new_layout[x] -= 1
+
+                new_layout[10] -= 1
+                test = Map(new_layout)
+                legal = test.legality_check()
+                if legal == False:
+                    pass
+                elif new_layout not in previous_positions:
+                    legal_next_steps.append(test)
+
+
+        previous_positions.append(position.item_floor)
+    current_move_positions = legal_next_steps
+    step_number += 1
+
+
+
 #
 # 1. Layout map. Set floor to elevator.
 #
@@ -26,181 +165,3 @@
 #       already_seen_states as a global variable, because if it's being reached
 #       for a second time anywhere, then we know there was a more efficient
 #       (or at least equally efficient) way to get there.
-
-from sys import exit
-
-
-step_number = 0
-
-previous_positions = []
-
-
-class Map(object):
-## variables: th, pl, st, pr, ru
-    def __init__(self, th_chip, th_gen, pl_chip, pl_gen, st_chip,
-                 st_gen, pr_chip, pr_gen, ru_chip, ru_gen, elevator):
-        self.th_chip = th_chip
-        self.th_gen = th_gen
-        self.pl_chip = pl_chip
-        self.pl_gen = pl_gen
-        self.st_chip = st_chip
-        self.st_gen = st_gen
-        self.pr_chip = pr_chip
-        self.pr_gen = pr_gen
-        self.ru_chip = ru_chip
-        self.ru_gen = ru_gen
-        self.elevator = elevator
-        self.item_list = [self.th_chip, self.th_gen, self.pl_chip, self.pl_gen,
-                          self.st_chip, self.st_gen, self.pr_chip, self.pr_gen,
-                          self.ru_chip, self.ru_gen, self.elevator]
-
-
-
-    def legality_check(self):
-        """This checks to see if a state is legal, and returns False if not"""
-        if (self.th_chip != self.th_gen) and (self.th_chip in [
-              self.pl_gen, self.st_gen, self.pr_gen, self.ru_gen]):
-            return False
-        elif (self.pl_chip != self.pl_gen) and (self.pl_chip in [
-              self.th_gen, self.st_gen, self.pr_gen, self.ru_gen]):
-            return False
-        elif (self.st_chip != self.st_gen) and (self.st_chip in [
-              self.th_gen, self.pl_gen, self.pr_gen, self.ru_gen]):
-            return False
-        elif (self.pr_chip != self.pr_gen) and (self.pr_chip in [
-              self.th_gen, self.st_gen, self.pl_gen, self.ru_gen]):
-            return False
-        elif (self.ru_chip != self.ru_gen) and (self.ru_chip in [
-              self.th_gen, self.st_gen, self.pr_gen, self.pl_gen]):
-            return False
-        else:
-            return True
-
-
-
-
-
-current_move_positions = [Map(1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1)]
-
-
-
-while step_number < 9:
-    # all this is creating objects of potential future positions
-    print step_number
-    legal_next_steps = []
-    for position in current_move_positions:
-        success = True
-        for item in position.item_list:
-            if item != 4:
-                success = False
-                break
-        if success == True:
-            print step_number
-            exit()
-
-
-        this_map_layout = [
-            position.th_chip,
-            position.th_gen,
-            position.pl_chip,
-            position.pl_gen,
-            position.st_chip,
-            position.st_gen,
-            position.pr_chip,
-            position.pr_gen,
-            position.ru_chip,
-            position.ru_gen
-        ]
-        object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
-                        'st_gen', 'pr_chip', 'pr_gen', 'ru_chip', 'ru_gen']
-
-        movable_object_list = []
-        # temporary storage of movable two-item combos, so we don't amend
-        # movable_object_list while we're reading from it.
-        duo_object_temp = []
-
-
-        for x in xrange(0, len(this_map_layout)):
-            if this_map_layout[x] == position.elevator:
-                movable_object_list.append(object_names[x])
-
-        for x in xrange(0, len(movable_object_list)):
-            for y in xrange(x + 1, len(movable_object_list)):
-                duo = movable_object_list[x] + " " + movable_object_list[y]
-                duo_object_temp.append(duo)
-
-        # after this, we have a list of items that can possibly be moved
-        for item in duo_object_temp:
-            movable_object_list.append(item)
-
-
-        if position.elevator == 4:
-            pass
-        else:
-            for item in movable_object_list:
-
-                new_layout = [position.th_chip, position.th_gen,
-                    position.pl_chip, position.pl_gen, position.st_chip,
-                    position.st_gen, position.pr_chip, position.pr_gen,
-                    position.ru_chip, position.ru_gen]
-
-                for x in xrange(0, len(object_names)):
-                    if object_names[x] in item:
-                        new_layout[x] += 1
-
-                test = Map(new_layout[0], new_layout[1], new_layout[2],
-                    new_layout[3], new_layout[4], new_layout[5], new_layout[6],
-                    new_layout[7], new_layout[8], new_layout[9],
-                    position.elevator + 1)
-                legal = test.legality_check()
-                if legal == False:
-                    pass
-                else:
-                    repeat_test = ''
-                    for item in test.item_list:
-                        repeat_test += str(item)
-
-
-                    if repeat_test not in previous_positions and legal == True:
-
-                        legal_next_steps.append(test)
-
-        if position.elevator == 1:
-            pass
-        else:
-            for item in movable_object_list:
-                new_layout = [position.th_chip, position.th_gen,
-                    position.pl_chip, position.pl_gen, position.st_chip,
-                    position.st_gen, position.pr_chip, position.pr_gen,
-                    position.ru_chip, position.ru_gen]
-
-                for x in xrange(0, len(object_names)):
-                    if object_names[x] in item:
-                        new_layout[x] -= 1
-
-                test = Map(new_layout[0], new_layout[1], new_layout[2],
-                    new_layout[3], new_layout[4], new_layout[5], new_layout[6],
-                    new_layout[7], new_layout[8], new_layout[9],
-                    position.elevator - 1)
-                legal = test.legality_check()
-                if legal == False:
-                    pass
-                else:
-                    repeat_test = ''
-                    for item in test.item_list:
-                        repeat_test += str(item)
-
-
-
-
-                    if repeat_test not in previous_positions and legal == True:
-
-                        legal_next_steps.append(test)
-
-
-        prev_position_str = ''
-        for item in position.item_list:
-            prev_position_str += str(item)
-        previous_positions.append(prev_position_str)
-    current_move_positions = legal_next_steps
-    step_number += 1
