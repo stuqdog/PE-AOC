@@ -9,7 +9,7 @@ def legality_check(item_floor):
     elif (item_floor[2] != item_floor[3]) and (item_floor[2]
         in [item_floor[1], item_floor[5], item_floor[7], item_floor[9]]):
         return False
-    elif (item_floor[4] != item_floor[5]) and (item_floor[5]
+    elif (item_floor[4] != item_floor[5]) and (item_floor[4]
         in [item_floor[3], item_floor[1], item_floor[7], item_floor[9]]):
         return False
     elif (item_floor[6] != item_floor[7]) and (item_floor[6]
@@ -33,10 +33,11 @@ previous_positions = []
 
 while True:
 
-    print step_number
+    print "Steps: %d. States checked: %d." % (step_number,
+                                              len(previous_positions))
     legal_next_steps = []
 
-    for position in current_move_positions:
+    for position in iter(current_move_positions):
         success = True
         # check to see if any given position is a winner.
         for item in position:
