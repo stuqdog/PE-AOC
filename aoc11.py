@@ -3,23 +3,31 @@ from sys import exit
 
 def legality_check(item_floor):
     """This checks to see if a state is legal, and returns False if not"""
-    if (item_floor[0] != item_floor[1]) and (item_floor[0]
-        in [item_floor[3], item_floor[5], item_floor[7], item_floor[9]]):
-        return False
-    elif (item_floor[2] != item_floor[3]) and (item_floor[2]
-        in [item_floor[1], item_floor[5], item_floor[7], item_floor[9]]):
-        return False
-    elif (item_floor[4] != item_floor[5]) and (item_floor[4]
-        in [item_floor[3], item_floor[1], item_floor[7], item_floor[9]]):
-        return False
-    elif (item_floor[6] != item_floor[7]) and (item_floor[6]
-        in [item_floor[3], item_floor[5], item_floor[1], item_floor[9]]):
-        return False
-    elif (item_floor[8] != item_floor[9]) and (item_floor[8]
-        in [item_floor[3], item_floor[5], item_floor[7], item_floor[1]]):
-        return False
-    else:
-        return True
+    for x in range(0, 14, 2):
+        if (item_floor[x] != item_floor[x + 1]) and (item_floor[x] in [
+               item_floor[1], item_floor[3], item_floor[5], item_floor[7],
+               item_floor[9], item_floor[11], item_floor[13]]):
+            return False
+    return True
+
+
+    # if (item_floor[0] != item_floor[1]) and (item_floor[0]
+    #     in [item_floor[3], item_floor[5], item_floor[7], item_floor[9]]):
+    #     return False
+    # elif (item_floor[2] != item_floor[3]) and (item_floor[2]
+    #     in [item_floor[1], item_floor[5], item_floor[7], item_floor[9]]):
+    #     return False
+    # elif (item_floor[4] != item_floor[5]) and (item_floor[4]
+    #     in [item_floor[3], item_floor[1], item_floor[7], item_floor[9]]):
+    #     return False
+    # elif (item_floor[6] != item_floor[7]) and (item_floor[6]
+    #     in [item_floor[3], item_floor[5], item_floor[1], item_floor[9]]):
+    #     return False
+    # elif (item_floor[8] != item_floor[9]) and (item_floor[8]
+    #     in [item_floor[3], item_floor[5], item_floor[7], item_floor[1]]):
+    #     return False
+    # else:
+    #     return True
 
 # starting_positions and object_names entries correlate to one another.
 
