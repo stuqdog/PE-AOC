@@ -29,7 +29,6 @@ starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
 current_move_positions = [starting_positions]
 previous_positions = [starting_positions]
 step_number = 0
-previous_positions = []
 
 while True:
 
