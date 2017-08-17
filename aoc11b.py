@@ -9,36 +9,7 @@ def legality_check(item_floor):
                item_floor[9], item_floor[11], item_floor[13]]):
             return False
     return True
-    # if (item_floor[0] != item_floor[1]) and (item_floor[0] in [item_floor[3],
-    #        item_floor[5], item_floor[7], item_floor[9], item_floor[11],
-    #        item_floor[13]]):
-    #     return False
-    # elif (item_floor[2] != item_floor[3]) and (item_floor[2]
-    #     in [item_floor[1], item_floor[5], item_floor[7], item_floor[9],
-    #         item_floor[11], item_floor[13]]):
-    #     return False
-    # elif (item_floor[4] != item_floor[5]) and (item_floor[4]
-    #     in [item_floor[3], item_floor[1], item_floor[7], item_floor[9],
-    #         item_floor[11], item_floor[13]]):
-    #     return False
-    # elif (item_floor[6] != item_floor[7]) and (item_floor[6]
-    #     in [item_floor[3], item_floor[5], item_floor[1], item_floor[9],
-    #         item_floor[11], item_floor[13]]):
-    #     return False
-    # elif (item_floor[8] != item_floor[9]) and (item_floor[8]
-    #     in [item_floor[3], item_floor[5], item_floor[7], item_floor[1],
-    #         item_floor[11], item_floor[13]]):
-    #     return False
-    # elif (item_floor[10] != item_floor[11]) and (item_floor[10]
-    #     in [item_floor[3], item_floor[5], item_floor[7], item_floor[1],
-    #         item_floor[9], item_floor[13]]):
-    #     return False
-    # elif (item_floor[12] != item_floor[13]) and (item_floor[12]
-    #     in [item_floor[3], item_floor[5], item_floor[7], item_floor[1],
-    #         item_floor[11], item_floor[9]]):
-    #     return False
-    # else:
-    #     return True
+
 
 # starting_positions and object_names entries correlate to one another.
 
@@ -49,11 +20,10 @@ starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1]
 current_move_positions = [starting_positions]
 previous_positions = [starting_positions]
 step_number = 0
-previous_positions = []
-cache_reset = 0
-cache_delete = 0
+# cache_reset = 0
+# cache_delete = 0
 
-while step_number < 12:
+while step_number < 10:
 
     print "Steps: %d. States checked: %d." % (step_number,
                                               len(previous_positions))
@@ -82,38 +52,33 @@ while step_number < 12:
 # if a duo consists of a chip and a non-matching gen, we know right away it's
 # not legal.
 # Note: After testing, this doesn't seem to make any difference really.
-        # for x in xrange(0, len(movable_object_list)):
-        #     for y in xrange(x + 1, len(movable_object_list)):
-        #         if (movable_object_list[x].rstrip("chip")
-        #             == movable_object_list[y].rstrip("gen") or (
-        #                movable_object_list[y].rstrip("chip") ==
-        #                movable_object_list[x].rstrip("gen"))):
-        #             duo = movable_object_list[x] + " " + movable_object_list[y]
-        #             duo_object_temp_storage.append(duo)
-        #         elif ("chip" in movable_object_list[x] and
-        #               "chip" in movable_object_list[y]):
-        #             duo = movable_object_list[x] + " " + movable_object_list[y]
-        #             duo_object_temp_storage.append(duo)
-        #         elif ("gen" in movable_object_list[x] and
-        #               "gen" in movable_object_list[y]):
-        #             duo = movable_object_list[x] + " " + movable_object_list[y]
-        #             duo_object_temp_storage.append(duo)
         for x in xrange(0, len(movable_object_list)):
             for y in xrange(x + 1, len(movable_object_list)):
-                duo = movable_object_list[x] + " " + movable_object_list[y]
-                duo_object_temp_storage.append(duo)
+                if (movable_object_list[x].rstrip("chipgen")
+                        == movable_object_list[y].rstrip("chipgen") or (
+                        movable_object_list[x].lstrip("thplsruedi")
+                        == movable_object_list[y].lstrip("thplsruedi"))):
+                    duo = movable_object_list[x] + " " + movable_object_list[y]
+                    duo_object_temp_storage.append(duo)
 
         for item in duo_object_temp_storage:
             movable_object_list.append(item)
+        # for x in xrange(0, len(movable_object_list)):
+        #     for y in xrange(x + 1, len(movable_object_list)):
+        #         duo = movable_object_list[x] + " " + movable_object_list[y]
+        #         duo_object_temp_storage.append(duo)
+        #
+        # for item in duo_object_temp_storage:
+        #     movable_object_list.append(item)
 
 
 # Legal moves going up. If elevator == 4 then we're already at the top.
         if position[14] < 4:
             for item in movable_object_list:
 
-                new_layout = []
-                for i in position:
-                    new_layout.append(i)
+                new_layout = position[:]#list(position)
+                # for i in position:
+                #     new_layout.append(i)
 
                 for x in xrange(0, len(object_names)):
                     if object_names[x] in item:
@@ -133,9 +98,9 @@ while step_number < 12:
         if position[14] > 1:
             for item in movable_object_list:
 
-                new_layout = []
-                for i in position:
-                    new_layout.append(i)
+                new_layout = position[:]#list(position)
+                # for i in position:
+                #     new_layout.append(i)
 
                 for x in xrange(0, len(object_names)):
                     if object_names[x] in item:
@@ -152,10 +117,10 @@ while step_number < 12:
 
     current_move_positions = legal_next_steps
     step_number += 1
-    if cache_reset < 2:
-        cache_reset += 1
-    else:
-        cache_reset = 0
-        for x in range(0, cache_delete):
-            del previous_positions[x]
-        cache_delete = len(previous_positions)
+    # if cache_reset < 2:
+    #     cache_reset += 1
+    # else:
+    #     cache_reset = 0
+    #     for x in xrange(0, cache_delete):
+    #         del previous_positions[x]
+    #     cache_delete = len(previous_positions)
