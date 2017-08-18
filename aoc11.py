@@ -15,6 +15,7 @@ def add_if_legal(item_floor):
 starting_position = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
 current_move_positions = [starting_position]
 previous_positions = [starting_position]
+legal_next_steps = []
 step = 0
 
 while True:
@@ -39,35 +40,35 @@ while True:
                 movable_object_list.append(x)
 
                 if position[x] < 4:
-                    new_layout = position[:]
-                    new_layout[x] += 1
-                    new_layout[10] += 1
+                    layout = position[:]
+                    layout[x] += 1
+                    layout[10] += 1
                     add_if_legal(layout)
 
                 if position[x] > 1:
-                    new_layout = position[:]
-                    new_layout[x] -= 1
-                    new_layout[10] -= 1
+                    layout = position[:]
+                    layout[x] -= 1
+                    layout[10] -= 1
                     add_if_legal(layout)
 
 # Note to self: we can probably make some slight efficiency gains here.
 # if a duo consists of a chip and a non-matching gen, we know right away it's
 # not legal.
-        for i, item in enumerate(movable_object_list):
-            for y in movable_object_list[i:]:
+        for x, item in enumerate(movable_object_list):
+            for y in movable_object_list[x+1:]:
                 if position[10] < 4:
-                    new_layout = position[:]
-                    new_layout[x] += 1
-                    new_layout[y] += 1
-                    new_layout[10] += 1
-                    add_if_legal(new_layout)
+                    layout = position[:]
+                    layout[item] += 1
+                    layout[y] += 1
+                    layout[10] += 1
+                    add_if_legal(layout)
 
                 if position[10] > 1:
-                    new_layout = position[:]
-                    new_layout[x] -= 1
-                    new_layout[y] -= 1
-                    new_layout[10] -= 1
-                    add_if_legal(new_layout)
+                    layout = position[:]
+                    layout[item] -= 1
+                    layout[y] -= 1
+                    layout[10] -= 1
+                    add_if_legal(layout)
                 
 
     current_move_positions = legal_next_steps
