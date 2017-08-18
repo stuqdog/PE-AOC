@@ -22,7 +22,6 @@ current_move_positions = [starting_position]
 previous_positions = [starting_position]
 step = 0
 
-
 while True:
 
     print "Steps: %d. States checked: %d." % (
@@ -38,10 +37,24 @@ while True:
 
         movable_object_list = []
         duo_object_temp_storage = []
+        single_item_moved_layouts = []
 
         for x in xrange(0, 10):
             if position[x] == position[10]:
+                if position[x] < 4:
+                    new_layout = position[:]
+                    new_layout[x] += 1
+                    new_layout[10] += 1
+                    single_item_moved_layouts.append(new_layout)
+                if position[x] > 1:
+                    new_layout = position[:]
+                    new_layout[x] -= 1
+                    new_layout[10] -= 1
+                    single_item_moved_layouts.append(new_layout)
                 movable_object_list.append(object_names[x])
+
+        for layout in single_item_moved_layouts:
+            add_if_legal(layout)
 
 # Note to self: we can probably make some slight efficiency gains here.
 # if a duo consists of a chip and a non-matching gen, we know right away it's
@@ -51,37 +64,26 @@ while True:
                 duo = movable_object_list[x] + " " + movable_object_list[y]
                 duo_object_temp_storage.append(duo)
 
-        for item in duo_object_temp_storage:
-            movable_object_list.append(item)
-
-
 # Legal moves going up. If elevator == 4 then we're already at the top.
         if position[10] < 4:
-            for item in movable_object_list:
-
+            for item in duo_object_temp_storage:
                 new_layout = position[:]
-
+                new_layout[10] += 1
                 for x in xrange(0, 10):
                     if object_names[x] in item:
                         new_layout[x] += 1
-
-                new_layout[10] += 1
-
 
                 add_if_legal(new_layout)
 
 
 # Legal moves going down. If elevator == 1 then we're already at bottom floor.
         if position[10] > 1:
-            for item in movable_object_list:
-
+            for item in duo_object_temp_storage:
                 new_layout = position[:]
-
+                new_layout[10] -= 1
                 for x in xrange(0, 10):
                     if object_names[x] in item:
                         new_layout[x] -= 1
-
-                new_layout[10] -= 1
 
                 add_if_legal(new_layout)
 
