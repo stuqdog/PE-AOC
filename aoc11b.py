@@ -30,14 +30,9 @@ while step_number < 10:
     legal_next_steps = []
 
     for position in current_move_positions:
-        success = True
-        # check to see if any given position is a winner.
-        for item in position:
-            if item != 4:
-                success = False
-                break
-        if success == True:
-            print "Success! Total number of steps is %d" % step_number
+        if all(floor == 4 for floor in position):
+            print "Success! Total number of steps is %d" % step
+            print position
             exit()
 
 
