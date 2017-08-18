@@ -41,52 +41,39 @@ while True:
 
         for x in xrange(0, 10):
             if position[x] == position[10]:
+                movable_object_list.append(x)
+
                 if position[x] < 4:
                     new_layout = position[:]
                     new_layout[x] += 1
                     new_layout[10] += 1
-                    single_item_moved_layouts.append(new_layout)
+                    add_if_legal(layout)
+
                 if position[x] > 1:
                     new_layout = position[:]
                     new_layout[x] -= 1
                     new_layout[10] -= 1
-                    single_item_moved_layouts.append(new_layout)
-                movable_object_list.append(object_names[x])
-
-        for layout in single_item_moved_layouts:
-            add_if_legal(layout)
+                    add_if_legal(layout)
 
 # Note to self: we can probably make some slight efficiency gains here.
 # if a duo consists of a chip and a non-matching gen, we know right away it's
 # not legal.
-        for x in xrange(0, len(movable_object_list)):
-            for y in xrange(x + 1, len(movable_object_list)):
-                duo = movable_object_list[x] + " " + movable_object_list[y]
-                duo_object_temp_storage.append(duo)
+        for i, item in enumerate(movable_object_list):
+            for y in movable_object_list[i:]:
+                if position[10] < 4:
+                    new_layout = position[:]
+                    new_layout[x] += 1
+                    new_layout[y] += 1
+                    new_layout[10] += 1
+                    add_if_legal(new_layout)
 
-# Legal moves going up. If elevator == 4 then we're already at the top.
-        if position[10] < 4:
-            for item in duo_object_temp_storage:
-                new_layout = position[:]
-                new_layout[10] += 1
-                for x in xrange(0, 10):
-                    if object_names[x] in item:
-                        new_layout[x] += 1
-
-                add_if_legal(new_layout)
-
-
-# Legal moves going down. If elevator == 1 then we're already at bottom floor.
-        if position[10] > 1:
-            for item in duo_object_temp_storage:
-                new_layout = position[:]
-                new_layout[10] -= 1
-                for x in xrange(0, 10):
-                    if object_names[x] in item:
-                        new_layout[x] -= 1
-
-                add_if_legal(new_layout)
-
+                if position[10] > 1:
+                    new_layout = position[:]
+                    new_layout[x] -= 1
+                    new_layout[y] -= 1
+                    new_layout[10] -= 1
+                    add_if_legal(new_layout)
+                
 
     current_move_positions = legal_next_steps
     step += 1
