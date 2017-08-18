@@ -1,13 +1,16 @@
 from sys import exit
 
 
-def legality_check(item_floor):
+def add_if_legal(item_floor):
     """This checks to see if a state is legal, and returns False if not"""
     for x in range(0, 10, 2):
         if (item_floor[x] != item_floor[x + 1]):
             if (item_floor[x] in [item_floor[y] for y in range(1,10,2)]):
-                return False
-    return True
+                return
+    if item_floor not in previous_positions:
+        legal_next_steps.append(item_floor)
+        previous_positions.append(item_floor)
+
 
 
 # starting_position and object_names entries correlate to one another.
@@ -67,13 +70,7 @@ while True:
                 new_layout[10] += 1
 
 
-                legal = legality_check(new_layout)
-
-                if legal == False: #True and new_layout not in previous_positions:
-                    pass
-                elif new_layout not in previous_positions:
-                    legal_next_steps.append(new_layout)
-                    previous_positions.append(new_layout)
+                add_if_legal(new_layout)
 
 
 # Legal moves going down. If elevator == 1 then we're already at bottom floor.
@@ -90,13 +87,7 @@ while True:
 
                 new_layout[10] -= 1
 
-                legal = legality_check(new_layout)
-
-                if legal == False: #True and new_layout not in previous_positions:
-                    pass
-                elif new_layout not in previous_positions:
-                    legal_next_steps.append(new_layout)
-                    previous_positions.append(new_layout)
+                add_if_legal(new_layout)
 
 
     current_move_positions = legal_next_steps
