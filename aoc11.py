@@ -59,9 +59,7 @@ while True:
         if position[10] < 4:
             for item in movable_object_list:
 
-                new_layout = []
-                for i in position:
-                    new_layout.append(i)
+                new_layout = position[:]
 
                 for x in xrange(0, 10):
                     if object_names[x] in item:
@@ -77,9 +75,7 @@ while True:
         if position[10] > 1:
             for item in movable_object_list:
 
-                new_layout = []
-                for i in position:
-                    new_layout.append(i)
+                new_layout = position[:]
 
                 for x in xrange(0, 10):
                     if object_names[x] in item:
