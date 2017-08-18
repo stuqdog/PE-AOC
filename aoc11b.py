@@ -19,11 +19,10 @@ object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
 starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1]
 current_move_positions = [starting_positions]
 previous_positions = [starting_positions]
-step = 0
 # cache_reset = 0
 # cache_delete = 0
 
-while step < 10:
+for step in xrange(0,13):
 
     print "Steps: %d. States checked: %d." % (step,
                                               len(previous_positions))
@@ -111,7 +110,6 @@ while step < 10:
 
 
     current_move_positions = legal_next_steps
-    step += 1
     # if cache_reset < 2:
     #     cache_reset += 1
     # else:
