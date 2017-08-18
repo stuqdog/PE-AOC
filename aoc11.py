@@ -12,11 +12,6 @@ def add_if_legal(item_floor):
         previous_positions.append(item_floor)
 
 
-
-# starting_position and object_names entries correlate to one another.
-
-object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
-                'st_gen', 'pr_chip', 'pr_gen', 'ru_chip', 'ru_gen']
 starting_position = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
 current_move_positions = [starting_position]
 previous_positions = [starting_position]
