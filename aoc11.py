@@ -5,8 +5,7 @@ def legality_check(item_floor):
     """This checks to see if a state is legal, and returns False if not"""
     for x in range(0, 10, 2):
         if (item_floor[x] != item_floor[x + 1]):
-            if (item_floor[x] in [item_floor[1], item_floor[3],
-                  item_floor[5], item_floor[7], item_floor[9]]):
+            if (item_floor[x] in [item_floor[y] for y in range(1,10,2)]):
                 return False
     return True
 
