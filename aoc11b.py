@@ -19,25 +19,19 @@ object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
 starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1]
 current_move_positions = [starting_positions]
 previous_positions = [starting_positions]
-step_number = 0
 # cache_reset = 0
 # cache_delete = 0
 
-while step_number < 10:
+for step in xrange(0,13):
 
-    print "Steps: %d. States checked: %d." % (step_number,
+    print "Steps: %d. States checked: %d." % (step,
                                               len(previous_positions))
     legal_next_steps = []
 
     for position in current_move_positions:
-        success = True
-        # check to see if any given position is a winner.
-        for item in position:
-            if item != 4:
-                success = False
-                break
-        if success == True:
-            print "Success! Total number of steps is %d" % step_number
+        if all(floor == 4 for floor in position):
+            print "Success! Total number of steps is %d" % step
+            print position
             exit()
 
 
@@ -116,7 +110,6 @@ while step_number < 10:
 
 
     current_move_positions = legal_next_steps
-    step_number += 1
     # if cache_reset < 2:
     #     cache_reset += 1
     # else:
