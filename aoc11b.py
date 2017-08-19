@@ -19,13 +19,13 @@ object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
 starting_positions = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1]
 current_move_positions = [starting_positions]
 previous_positions = [starting_positions]
-step_number = 0
+step = 0
 # cache_reset = 0
-# cache_delete = 0
+cache_delete = [0, 0, 0]
 
-while step_number < 10:
+while True:
 
-    print "Steps: %d. States checked: %d." % (step_number,
+    print "Steps: %d. States checked: %d." % (step,
                                               len(previous_positions))
     legal_next_steps = []
 
@@ -37,7 +37,7 @@ while step_number < 10:
                 success = False
                 break
         if success == True:
-            print "Success! Total number of steps is %d" % step_number
+            print "Success! Total number of steps is %d" % step
             exit()
 
 
@@ -48,10 +48,6 @@ while step_number < 10:
             if position[x] == position[14]:
                 movable_object_list.append(object_names[x])
 
-# Note to self: we can probably make some slight efficiency gains here.
-# if a duo consists of a chip and a non-matching gen, we know right away it's
-# not legal.
-# Note: After testing, this doesn't seem to make any difference really.
         for x in xrange(0, len(movable_object_list)):
             for y in xrange(x + 1, len(movable_object_list)):
                 if (movable_object_list[x].rstrip("chipgen")
@@ -63,13 +59,7 @@ while step_number < 10:
 
         for item in duo_object_temp_storage:
             movable_object_list.append(item)
-        # for x in xrange(0, len(movable_object_list)):
-        #     for y in xrange(x + 1, len(movable_object_list)):
-        #         duo = movable_object_list[x] + " " + movable_object_list[y]
-        #         duo_object_temp_storage.append(duo)
-        #
-        # for item in duo_object_temp_storage:
-        #     movable_object_list.append(item)
+
 
 
 # Legal moves going up. If elevator == 4 then we're already at the top.
@@ -116,11 +106,17 @@ while step_number < 10:
 
 
     current_move_positions = legal_next_steps
-    step_number += 1
+    step += 1
+    cache_delete[2] = cache_delete[1]
+    cache_delete[1] = cache_delete[0]
+    cache_delete[0] = len(legal_next_steps)
+    previous_positions = previous_positions[cache_delete[2]:]
+
     # if cache_reset < 2:
     #     cache_reset += 1
     # else:
     #     cache_reset = 0
-    #     for x in xrange(0, cache_delete):
-    #         del previous_positions[x]
+    #     previous_positions = previous_positions[cache_delete:]
+    #     # for x in xrange(0, cache_delete):
+    #     #     del previous_positions[x]
     #     cache_delete = len(previous_positions)

@@ -18,15 +18,15 @@ object_names = ['th_chip', 'th_gen', 'pl_chip', 'pl_gen', 'st_chip',
 starting_position = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
 current_move_positions = [starting_position]
 previous_positions = [starting_position]
-step_number = 0
+step = 0
+cache_delete = [1, 0, 0]
 
 
-while step_number < 13:
+while step < 12:
 
     print "Steps: %d. States checked: %d." % (
-                 step_number, len(previous_positions))
+                 step, len(previous_positions))
     legal_next_steps = []
-
     for position in iter(current_move_positions):
         success = True
         # check to see if any given position is a winner.
@@ -35,7 +35,7 @@ while step_number < 13:
                 success = False
                 break
         if success == True:
-            print "Success! Total number of steps is %d" % step_number
+            print "Success! Total number of steps is %d" % step
             exit()
 
 
@@ -46,13 +46,14 @@ while step_number < 13:
             if position[x] == position[10]:
                 movable_object_list.append(object_names[x])
 
-# Note to self: we can probably make some slight efficiency gains here.
-# if a duo consists of a chip and a non-matching gen, we know right away it's
-# not legal.
         for x in xrange(0, len(movable_object_list)):
             for y in xrange(x + 1, len(movable_object_list)):
-                duo = movable_object_list[x] + " " + movable_object_list[y]
-                duo_object_temp_storage.append(duo)
+                if (movable_object_list[x].rstrip("chipgen")
+                        == movable_object_list[y].rstrip("chipgen") or
+                        movable_object_list[x].lstrip("thplsru")
+                        == movable_object_list[y].lstrip("thplsru")):
+                    duo = movable_object_list[x] + " " + movable_object_list[y]
+                    duo_object_temp_storage.append(duo)
 
         for item in duo_object_temp_storage:
             movable_object_list.append(item)
@@ -62,9 +63,7 @@ while step_number < 13:
         if position[10] < 4:
             for item in movable_object_list:
 
-                new_layout = []
-                for i in position:
-                    new_layout.append(i)
+                new_layout = position[:]
 
                 for x in xrange(0, 10):
                     if object_names[x] in item:
@@ -75,9 +74,7 @@ while step_number < 13:
 
                 legal = legality_check(new_layout)
 
-                if legal == False: #True and new_layout not in previous_positions:
-                    pass
-                elif new_layout not in previous_positions:
+                if legal == True and new_layout not in previous_positions:
                     legal_next_steps.append(new_layout)
                     previous_positions.append(new_layout)
 
@@ -86,9 +83,7 @@ while step_number < 13:
         if position[10] > 1:
             for item in movable_object_list:
 
-                new_layout = []
-                for i in position:
-                    new_layout.append(i)
+                new_layout = position[:]
 
                 for x in xrange(0, 10):
                     if object_names[x] in item:
@@ -98,12 +93,14 @@ while step_number < 13:
 
                 legal = legality_check(new_layout)
 
-                if legal == False: #True and new_layout not in previous_positions:
-                    pass
-                elif new_layout not in previous_positions:
+                if legal == True and new_layout not in previous_positions:
                     legal_next_steps.append(new_layout)
                     previous_positions.append(new_layout)
 
 
     current_move_positions = legal_next_steps
-    step_number += 1
+    step += 1
+    cache_delete[2] = cache_delete[1]
+    cache_delete[1] = cache_delete[0]
+    cache_delete[0] = len(legal_next_steps)
+    previous_positions = previous_positions[cache_delete[2]:]
