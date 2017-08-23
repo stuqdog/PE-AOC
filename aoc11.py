@@ -53,21 +53,25 @@ while True:
                     new_layout[10] -= 1
                     add_if_legal(new_layout)
 
+
         for x, item in enumerate(movable_object_list):
             for y in movable_object_list[x+1:]:
-                if position[10] < 4:
-                    new_layout = position[:]
-                    new_layout[item] += 1
-                    new_layout[y] += 1
-                    new_layout[10] += 1
-                    add_if_legal(new_layout)
+                if y - item != 1 and (y - item) % 2 != 0:
+                    pass
+                else:
+                    if position[10] < 4:
+                        new_layout = position[:]
+                        new_layout[item] += 1
+                        new_layout[y] += 1
+                        new_layout[10] += 1
+                        add_if_legal(new_layout)
+                    if position[10] > 1:
+                        new_layout = position[:]
+                        new_layout[item] -= 1
+                        new_layout[y] -= 1
+                        new_layout[10] -= 1
+                        add_if_legal(new_layout)
 
-                if position[10] > 1:
-                    new_layout = position[:]
-                    new_layout[item] -= 1
-                    new_layout[y] -= 1
-                    new_layout[10] -= 1
-                    add_if_legal(new_layout)
 
 
     current_move_positions = legal_next_steps
