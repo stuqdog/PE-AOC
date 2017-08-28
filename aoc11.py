@@ -7,9 +7,9 @@ def add_if_legal(item_floor):
         if (item_floor[x] != item_floor[x + 1]):
             if item_floor[x] in (item_floor[y] for y in range(1, 10, 2)):
                 return
-    if item_floor not in previous_positions:
+    if str(item_floor) not in previous_positions:
         legal_next_steps.append(item_floor)
-        previous_positions.append(item_floor)
+        previous_positions[str(item_floor)] = step
 
 
 # starting_position and object_names entries correlate to one another.
@@ -18,7 +18,7 @@ def add_if_legal(item_floor):
 
 starting_position = [1, 1, 2, 1, 2, 1, 3, 3, 3, 3, 1]
 current_move_positions = [starting_position]
-previous_positions = [starting_position]
+previous_positions = {str(starting_position): 0}
 step = 0
 cache_delete = [1, 0, 0]
 
@@ -26,7 +26,7 @@ cache_delete = [1, 0, 0]
 while True:
 
     print "Steps: %d. States checked: %d." % (
-                 step, len(previous_positions))
+                 step, len(previous_positions.keys()))
     legal_next_steps = []
     for position in iter(current_move_positions):
         # check to see if any given position is a winner.
@@ -76,7 +76,7 @@ while True:
 
     current_move_positions = legal_next_steps
     step += 1
-    cache_delete[2] = cache_delete[1]
-    cache_delete[1] = cache_delete[0]
-    cache_delete[0] = len(legal_next_steps)
-    previous_positions = previous_positions[cache_delete[2]:]
+    # cache_delete[2] = cache_delete[1]
+    # cache_delete[1] = cache_delete[0]
+    # cache_delete[0] = len(legal_next_steps)
+    # previous_positions = previous_positions[cache_delete[2]:]
