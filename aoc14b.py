@@ -18,6 +18,9 @@ while len(solution) < 64:
     key = key_base + str(key_iterator)
     test = md5.new(key).hexdigest()
 
+    for x in xrange(0, 2016):
+        test = md5.new(test).hexdigest()
+
     for i, triplet in enumerate(triplet_check):
         for x in range(0, len(test) - 4):
             if all(test[y] == triplet.key_char for y in range(x, x + 5)):
