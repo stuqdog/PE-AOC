@@ -19,9 +19,8 @@ class Position(object):
         else:
             previous_positions[str(self.coordinates)] = self.move
 
-        check = ((self.x * self.x) + (3 * self.x)
-                  + (2 * self.x * self.y)
-                  + self.y + (self.y * self.y) + 1362)
+        check = ((self.x ** 2) + (3 * self.x) + (2 * self.x * self.y)
+                  + self.y + (self.y ** 2) + 1362)
 
         check = str(bin(check))
         one_check = 0
@@ -35,9 +34,6 @@ class Position(object):
 
 start = Position(1, 1, 0)
 previous_positions = {'(1, 1)': 0}
-
-# Try to make this a dict for now. But maybe it has to be a list, if we can't
-# sort it properly.
 to_test = [start]
 
 while True:
