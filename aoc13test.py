@@ -12,9 +12,9 @@ def wall_test(x, y):
             one_check += 1
 
     if one_check % 2 == 1:
-        print "NOT A WALL"
+        print "A WALL"
 
 
-wall_test(3, 2)
-wall_test(4, 1)
-wall_test(2, 3)
+wall_test(0, 4)
+wall_test(1, 3)
+wall_test(2, 4)
