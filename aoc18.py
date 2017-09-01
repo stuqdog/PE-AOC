@@ -20,8 +20,6 @@ def find_tile_type(tile):
 
 with open("aoc18.txt") as f:
     start_line = f.readline().strip()
-print start_line
-print len(start_line)
 rows = [list(start_line)]
 
 # generate 39 new rows, since the first one is a freebie
