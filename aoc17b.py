@@ -12,8 +12,9 @@ class Position(object):
     def test_new_direction(self):
 
         if self.x == 4 and self.y == 4:
-            print "Success! Path is: %s" % self.path_taken
-            exit()
+            solution = self.path_taken
+            # Need to return here to prevent from continuing on from (4, 4)
+            return solution
 
         hash_test = md5.new(self.hash).hexdigest()
 
@@ -30,19 +31,27 @@ class Position(object):
             new_position = Position(self.x + 1, self.y, self.path_taken + 'R')
             legal_next_steps.append(new_position)
 
+        return None
 
 
 starting_position = Position(1, 1, '')
 current_positions = [starting_position]
+solution = ''
+step = 0
 
 while True:
 
     legal_next_steps = []
 
     for position in current_positions:
-        position.test_new_direction()
+        solution_check = position.test_new_direction()
+        if solution_check != None:
+            solution = solution_check
 
     if legal_next_steps == []:
-        print "No legal moves remain. This is an error."
+        print "Final step reached! It is %s: length is %d" % (
+            solution, len(solution))
         exit()
     current_positions = legal_next_steps
+    step += 1
+    # print step
