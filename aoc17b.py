@@ -45,7 +45,7 @@ while True:
 
     for position in current_positions:
         solution_check = position.test_new_direction()
-        if solution_check != None:
+        if solution_check:
             solution = solution_check
 
     if legal_next_steps == []:
@@ -54,4 +54,3 @@ while True:
         exit()
     current_positions = legal_next_steps
     step += 1
-    # print step
