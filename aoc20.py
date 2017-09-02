@@ -1,6 +1,7 @@
 import re
 ip_list = []
 list_size = 0
+blocked_ip_upper_bound = 0
 
 with open("aoc20.txt") as f:
     for line in f:
@@ -15,6 +16,8 @@ ip_list = sorted(ip_list, key=lambda ip_range: ip_range[0])
 
 for i in xrange(0, list_size):
     x = ip_list[i][1] + 1
-    if x < ip_list[i + 1][0]:
-        print x
+    if blocked_ip_upper_bound < x:
+        blocked_ip_upper_bound = x
+    if blocked_ip_upper_bound < ip_list[i + 1][0]:
+        print blocked_ip_upper_bound
         break
