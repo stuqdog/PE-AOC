@@ -18,8 +18,5 @@ while elves > 1:
 
     elves -= 1
 
-
-
-
 for elf in elf_circle:
     print elf + 1
