@@ -7,10 +7,19 @@ registers = {"a": 7, "b": 0, "c": 0, "d": 0}
 step = 0
 instruction_length = 0
 
-class Instruction(object):
+class InstructionOne(object):
 
-    def __init__(self, rule, toggle=False):
+    def __init__(self, rule, var, toggle=False):
         self.rule = rule
+        self.var = var
+        self.toggle = toggle
+
+class InstructionTwo(object):
+
+    def __init__(self, rule, var_one, var_two, toggle=False):
+        self.rule = rule
+        self.var_one = var_one
+        self.var_two = var_two
         self.toggle = toggle
 
 
@@ -39,7 +48,7 @@ def jnz(check, jump):
         if jump in registers:
             return registers[jump]
         else:
-            return int(jump)
+            return jump
 
 def tgl(jump):
     if jump in registers:
@@ -56,76 +65,77 @@ def tgl(jump):
                 instructions[to_toggle].toggle == True
         return 1
 
-
+# This just tells us to follow instructions
 def follow_instruction(line):
-    instruction = re.match("cpy (.*?) (a|b|c|d)", line.rule, re.I)
-    if instruction and line.toggle == False:
-        return cpy(instruction.group(1), instruction.group(2))
-    elif instruction and line.toggle == True:
-        return jnz(instruction.group(1), instruction.group(2))
 
-    if not instruction:
-        instruction = re.match("(inc|dec) (a|b|c|d)", line.rule, re.I)
-        if instruction:
-            if (instruction.group(1) == "inc" and line.toggle == False) or (
-                  instruction.group(2) == "dec" and line.toggle == True):
-                return inc(instruction.group(2))
-            else:
-                return dec(instruction.group(2))
+    if line.rule == "cpy":
+        if line.toggle == False:
+            return cpy (line.var_one, line.var_two)
+        else:
+            return jnz(line.var_one, line.var_two)
 
-    if not instruction:
-        instruction = re.match("jnz (a|b|c|d|\d*) (\-*)(.+)", line.rule, re.I)
-        if instruction:
-            if instruction.group(2) == "-" and (
-                       instruction.group(3) in string.digits):
-                second_val = 0 - int(instruction.group(3))
-            elif instruction.group(3) in string.digits:
-                second_val = int(instruction.group(3))
-            else:
-                second_val = instruction.group(3)
+    elif line.rule == "inc":
+        if line.toggle == False:
+            return inc(line.var)
+        else:
+            return dec(line.var)
 
-            if line.toggle == False:
-                return jnz(instruction.group(1), second_val)
-            elif line.toggle == True:
-                return cpy(instruction.group(1), second_val)
+    elif line.rule == "dec":
+        if line.toggle == False:
+            return dec(line.var)
+        else:
+            return inc(line.var)
 
-    if not instruction:
-        instruction = re.match("tgl (.*)", line.rule, re.I)
-        if instruction and line.toggle == False:
-            return tgl(instruction.group(1))
-        elif instruction and line.toggle == True:
-            return inc(instruction.group(1))
+    elif line.rule == "jnz":
+        if line.toggle == False:
+            return jnz(line.var_one, line.var_two)
+        else:
+            return cpy(line.var_one, line.var_two)
 
-    if not instruction:
+    elif line.rule == "tgl":
+        if line.toggle == False:
+            return tgl(line.var)
+        else:
+            return inc(line.var)
+
+    else:
         print "There's a mistake"
         print step
         exit()
 
-
+#This just gets us our instructions.
 with open("aoc23.txt") as f:
     for line in f:
         sucess = False
         check = re.match("cpy (.*?) (a|b|c|d)", line, re.I)
         if check:
-            instructions.append(Instruction(check.group(0)))
+            instructions.append(InstructionTwo("cpy", check.group(1),
+                                            check.group(2)))
             instruction_length += 1
             sucess = True
 
         check = re.match("(inc|dec) (a|b|c|d)", line, re.I)
         if check:
-            instructions.append(Instruction(check.group(0)))
+            instructions.append(InstructionOne(check.group(1), check.group(2)))
             instruction_length += 1
             sucess = True
 
         check = re.match("jnz (a|b|c|d|\d*) (\-*)(.+)", line, re.I)
         if check:
-            instructions.append(Instruction(check.group(0)))
+            if check.group(2) == "-":
+                second_var = 0 - int(check.group(3))
+            elif check.group(3) in string.digits:
+                second_var = int(check.group(3))
+            else:
+                second_var = check.group(3)
+            instructions.append(InstructionTwo("jnz", check.group(1),
+                                               second_var))
             instruction_length += 1
             sucess = True
 
         check = re.match("tgl (.)", line, re.I)
         if check:
-            instructions.append(Instruction(check.group(0)))
+            instructions.append(InstructionOne("tgl", check.group(1)))
             instruction_length += 1
             sucess = True
 
@@ -133,7 +143,7 @@ with open("aoc23.txt") as f:
             print "ERROR HERE"
             print line
 
-print instruction_length
+
 while step < instruction_length:
 
     step_change = follow_instruction(instructions[step])
