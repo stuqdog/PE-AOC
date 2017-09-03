@@ -3,7 +3,7 @@ from sys import exit
 import string
 
 instructions = []
-registers = {"a": 12, "b": 0, "c": 0, "d": 0}
+registers = {"a": 7, "b": 0, "c": 0, "d": 0}
 step = 0
 instruction_length = 0
 
@@ -134,7 +134,7 @@ while step < instruction_length:
                           (instructions[step - 1].var_one) in registers):
                 registers[instructions[step].var] += (
                         registers[instructions[step - 1].var_one]
-                        * registers[instructions[step + 3].var])
+                        * (registers[instructions[step + 3].var] - 1))
                 registers[instructions[step + 3].var] = 0
                 step += 4
             else:
@@ -151,7 +151,7 @@ while step < instruction_length:
                   (instructions[step - 1].var_one) in registers):
                 registers[instructions[step + 1].var] += (
                         registers[instructions[step - 1].var_one]
-                        * registers[instructions[step + 3].var])
+                        * (registers[instructions[step + 3].var] - 1))
                 registers[instructions[step + 3].var] = 0
                 step += 4
             else:
