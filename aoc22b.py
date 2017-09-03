@@ -54,10 +54,6 @@ def find_legal_positions(test):
         legal_positions.append(new_position)
 
 
-
-
-
-
 node_template = ".*?-x(\d*)\-y(\d*) \s*(\d*)T \s*(\d*)T \s*(\d*)T"
 legal_nodes = {}
 previous_positions = {}
