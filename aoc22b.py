@@ -63,8 +63,9 @@ class Node(object):
 
 def find_legal_positions(test):
 
+
     prev_position_tuple = (test.x, test.y, test.data_coordinates)
-    if prev_position_tuple in previous_positions:
+    if prev_position_tuple in previous_positions.keys():
         return
     else:
         previous_positions[prev_position_tuple] = test.traveled
@@ -72,13 +73,13 @@ def find_legal_positions(test):
     if (test.x - 1, test.y) in legal_nodes:
         new_position = Node(test.x - 1, test.y, test.traveled + 1)
         if test.data_coordinates == new_position.coordinates:
-            new_position.data_coordinates = test.coordinates
+            new_position.data_coordinates = (test.x, test.y)
         legal_positions.append(new_position)
 
     if (test.x + 1, test.y) in legal_nodes:
         new_position = Node(test.x + 1, test.y, test.traveled + 1)
         if test.data_coordinates == new_position.coordinates:
-            new_position.data_coordinates = test.coordinates
+            new_position.data_coordinates = (test.x, test.y)
         legal_positions.append(new_position)
 
     if (test.x, test.y - 1) in legal_nodes:
@@ -90,7 +91,7 @@ def find_legal_positions(test):
     if (test.x, test.y + 1) in legal_nodes:
         new_position = Node(test.x, test.y + 1, test.traveled + 1)
         if test.data_coordinates == new_position.coordinates:
-            new_position.data_coordinates = test.coordinates
+            new_position.data_coordinates = (test.x, test.y)
         legal_positions.append(new_position)
 
 
@@ -122,7 +123,7 @@ with open("aoc22.txt") as f:
             size = int(stats.group(3))
             if used == 0:
                 start_position = Node(x_coord, y_coord, 0)
-            elif used < max_storage:
+            if used < max_storage:
                 legal_nodes[coord] = "open"
 
 legal_positions = [start_position]
@@ -132,13 +133,16 @@ while True:
     find_legal_positions(legal_positions[0])
     #print legal_positions[0].to_go
     #if legal_positions[0].to_go == 1:
-    if legal_positions[0].coordinates == (29, 0):
-        print "WE ARE HERE"
+    if legal_positions[0].to_go == 0:
+        previous_positions = {}
         #print len(legal_positions)
         break
 
     del legal_positions[0]
-    legal_positions = sorted(legal_positions, key=lambda node: node.to_go)
+    legal_positions = sorted(legal_positions,
+                             key=lambda node: (node.to_go + node.traveled))
+
+previous_positions = {}
 
 while True:
     if legal_positions[0].data_coordinates == (0, 0):
@@ -147,19 +151,7 @@ while True:
 
     del legal_positions[0]
     legal_positions = sorted(legal_positions, key=lambda node:
-                        node.data_coordinates[0] + node.data_coordinates[1])
+                        (node.data_coordinates[0] + node.data_coordinates[1]))
 
 
 print legal_positions[0].traveled
-#
-# print "THIS IS OKAY"
-# print lowest_size
-# print highest_used
-
-
-        #
-        # if used != 0:
-        #     base_node_layout[coord] = Node(x_coord, y_coord, used, avail)
-        # else:
-        #     base_node_layout[coord] = Empty(x_coord, y_coord, used, avail,
-        #                               0, abs(30 - x_coord) + abs(0 - y_coord))
