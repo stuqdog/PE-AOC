@@ -1,3 +1,9 @@
+# How about this: instead of regexing constantly, let's just do it once and then
+# set the variables. So we'll need two classes: InstructionOne and InstructionTwo.
+# Then, we can say "oh, if this says add one and the next one says subtract one
+# and the third says go back 2, we can just say first += 2nd, second = 1, go."
+
+
 import re
 from sys import exit
 import string
@@ -135,7 +141,7 @@ with open("aoc23.txt") as f:
 
 print instruction_length
 while step < instruction_length:
-    print step
+    print registers
 
     step_change = follow_instruction(instructions[step])
     step += step_change
