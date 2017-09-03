@@ -3,7 +3,7 @@ from sys import exit
 import string
 
 instructions = []
-registers = {"a": 7, "b": 0, "c": 0, "d": 0}
+registers = {"a": 12, "b": 0, "c": 0, "d": 0}
 step = 0
 instruction_length = 0
 
