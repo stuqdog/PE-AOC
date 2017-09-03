@@ -3,7 +3,7 @@ from sys import exit
 import string
 
 instructions = []
-registers = {"a": 7, "b": 0, "c": 0, "d": 0}
+registers = {"a": 12, "b": 0, "c": 0, "d": 0}
 step = 0
 instruction_length = 0
 
@@ -72,7 +72,6 @@ def tgl(jump):
     return 1
 
 
-# This just tells us to follow instructions
 def follow_instruction(line):
 
     if line.rule == "cpy":
@@ -90,7 +89,7 @@ def follow_instruction(line):
         print step
         exit()
 
-#This just gets us our instructions.
+
 with open("aoc23.txt") as f:
     for line in f:
         check = re.match("cpy (.*?) (a|b|c|d)", line, re.I)
@@ -122,7 +121,6 @@ with open("aoc23.txt") as f:
             instruction_length += 1
 
 
-
 while step < instruction_length:
 
     if (instructions[step].rule == 'inc' and instructions[step + 1].rule ==
@@ -131,6 +129,15 @@ while step < instruction_length:
                 registers[instructions[step].var] += (
                   registers[instructions[step + 1].var])
                 registers[instructions[step + 1].var] = 0
+            if instructions[step + 3].rule == "dec" and (
+                          instructions[step + 4].rule == "jnz" and
+                          (instructions[step - 1].var_one) in registers):
+                registers[instructions[step].var] += (
+                        registers[instructions[step - 1].var_one]
+                        * registers[instructions[step + 3].var])
+                registers[instructions[step + 3].var] = 0
+                step += 4
+            else:
                 step += 2
 
     elif (instructions[step].rule == 'dec' and instructions[step + 1].rule ==
@@ -139,6 +146,15 @@ while step < instruction_length:
                 registers[instructions[step + 1].var] += (
                   registers[instructions[step].var])
                 registers[instructions[step].var] = 0
+            if instructions[step + 3].rule == "dec" and (
+                  instructions[step + 4].rule == "jnz" and
+                  (instructions[step - 1].var_one) in registers):
+                registers[instructions[step + 1].var] += (
+                        registers[instructions[step - 1].var_one]
+                        * registers[instructions[step + 3].var])
+                registers[instructions[step + 3].var] = 0
+                step += 4
+            else:
                 step += 2
 
     else:
