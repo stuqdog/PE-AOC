@@ -10,18 +10,19 @@ class Position(object):
         self.heuristic = steps
 
     def update_heuristic(self):
-        pass
-        # update = 0
-        # for x in range(0, 8):
-        #     update += ((abs(spot_coordinates[str(x)][0] - self.x)
-        #         + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
-        # self.heuristic = update + self.steps
+        update = 0
+        for x in range(0, 8):
+            update += ((abs(spot_coordinates[str(x)][0] - self.x)
+                + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
+        self.heuristic = update + self.steps
 
 
 
 def find_legal_positions(x, y, visited, steps):
 
-    if str((x, y, visited)) in previous_positions:
+    # if str((x, y, visited)) in previous_positions:
+    if str((x, y, visited)) in previous_positions and (
+        previous_positions[str((x, y, visited))] <= steps):
         return
 
     previous_positions[str((x, y, visited))] = steps
@@ -91,7 +92,6 @@ while len(to_check) != 0:
     visited_check = sum(to_check[0].visited[x] for x, i in
                         enumerate(to_check[0].visited))
     if visited_check == 0:
-        print to_check[0]
         if solution == 0:
             solution = to_check[0].steps
         else:
@@ -109,8 +109,12 @@ while len(to_check) != 0:
     del to_check[0]
     to_check = sorted(to_check, key=lambda position: position.heuristic)
 
-    if solution != 0 and len(to_check) > 0 and to_check[0].steps > solution:
-            del to_check[0]
+    if solution != 0:
+        while True:
+            if len(to_check) > 0 and to_check[0].steps > solution:
+                del to_check[0]
+            else:
+                break
 
 
 print solution
