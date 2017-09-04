@@ -94,10 +94,11 @@ while len(to_check) != 0:
     if visited_check == 0:
         if solution == 0:
             solution = to_check[0].steps
+            print solution
         else:
             if to_check[0].steps < solution:
                 solution = to_check[0].steps
-        print solution
+                print solution
 
     if visited_check < check_counter:
         print check_counter
