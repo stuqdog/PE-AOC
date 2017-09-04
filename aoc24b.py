@@ -7,28 +7,12 @@ class Position(object):
         self.y = y
         self.visited = visited
         self.steps = steps
-        self.heuristic = steps
         self.visit_all = visit_all
-
-    def update_heuristic(self):
-
-        if self.visit_all == False:
-            update = 0
-            for x in range(0, 8):
-                update += ((abs(spot_coordinates[str(x)][0] - self.x)
-                + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
-            self.heuristic = update + self.steps
-
-        else:
-            self.heuristic = (abs(spot_coordinates['0'][0] - self.x) +
-                              abs(spot_coordinates['0'][1] - self.y))
 
 
 def find_legal_positions(x, y, visited, steps, visit_all):
 
-    if str((x, y, visited)) in previous_positions and (
-        previous_positions[str((x, y, visited))] <= steps
-    ):
+    if str((x, y, visited)) in previous_positions:
         return
 
     previous_positions[str((x, y, visited))] = steps
@@ -36,25 +20,21 @@ def find_legal_positions(x, y, visited, steps, visit_all):
     if layout[y + 1][x] != "#":
         new_visited = visited[:]
         new_position = Position(x, y + 1, new_visited, steps + 1, visit_all)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y - 1][x] != '#':
         new_visited = visited[:]
         new_position = Position(x, y - 1, new_visited, steps + 1, visit_all)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y][x + 1] != '#':
         new_visited = visited[:]
         new_position = Position(x + 1, y, new_visited, steps + 1, visit_all)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y][x - 1] != '#':
         new_visited = visited[:]
         new_position = Position(x - 1, y, new_visited, steps + 1, visit_all)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
 
@@ -64,7 +44,6 @@ spots = []
 spot_coordinates = {}
 layout = []
 check_counter = 8
-solution = 0
 
 with open("aoc24.txt") as f:
     for line in f:
@@ -87,7 +66,7 @@ to_check = [start_position]
 check_counter = 8
 
 
-while len(to_check) != 0:
+while True:
 
     current_tile = layout[to_check[0].y][to_check[0].x]
     if current_tile in string.digits:
@@ -101,27 +80,14 @@ while len(to_check) != 0:
             print check_counter
             check_counter = visited_check
 
-    elif to_check[0].heuristic == 0:
-        if solution == 0:
-            solution = to_check[0].steps
-            print solution
-        else:
-            if to_check[0].steps < solution:
-                solution = to_check[0].steps
-                print solution
+    elif to_check[0].x == start_x and to_check[0].y == start_y:
+        break
 
     find_legal_positions(to_check[0].x, to_check[0].y, to_check[0].visited,
                          to_check[0].steps, to_check[0].visit_all)
 
     del to_check[0]
-    to_check = sorted(to_check, key=lambda position: position.heuristic)
-
-    if solution != 0:
-        while True:
-            if len(to_check) > 0 and to_check[0].steps > solution:
-                del to_check[0]
-            else:
-                break
+    to_check = sorted(to_check, key=lambda position: position.steps)
 
 
-print solution
+print to_check[0].steps
