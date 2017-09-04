@@ -10,11 +10,12 @@ class Position(object):
         self.heuristic = steps
 
     def update_heuristic(self):
-        update = 0
-        for x in range(0, 8):
-            update += ((abs(spot_coordinates[str(x)][0] - self.x)
-                + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
-        self.heuristic = update + self.steps
+        pass
+        # update = 0
+        # for x in range(0, 8):
+        #     update += ((abs(spot_coordinates[str(x)][0] - self.x)
+        #         + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
+        # self.heuristic = update + self.steps
 
 
 
@@ -87,13 +88,16 @@ while len(to_check) != 0:
     if current_tile in string.digits:
         to_check[0].visited[int(current_tile)] = 0
 
-    visited_check = sum(to_check[0].visited[x] for x in range(0, 8))
+    visited_check = sum(to_check[0].visited[x] for x, i in
+                        enumerate(to_check[0].visited))
     if visited_check == 0:
+        print to_check[0]
         if solution == 0:
             solution = to_check[0].steps
         else:
             if to_check[0].steps < solution:
                 solution = to_check[0].steps
+        print solution
 
     if visited_check < check_counter:
         print check_counter
@@ -105,8 +109,8 @@ while len(to_check) != 0:
     del to_check[0]
     to_check = sorted(to_check, key=lambda position: position.heuristic)
 
-    if solution != 0:
-        while len(to_check) != 0 and to_check[0].steps > solution:
+    if solution != 0 and len(to_check) > 0 and to_check[0].steps > solution:
             del to_check[0]
+
 
 print solution
