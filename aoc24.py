@@ -14,12 +14,13 @@ class Position(object):
         for x in range(0, 8):
             update += ((abs(spot_coord[x][0] - self.x)
                 + abs(spot_coord[x][1] - self.y)) * self.visited[x])
-        self.heuristic += update
+        self.heuristic = update + self.steps
+
 
 
 def find_legal_positions(x, y, visited, steps):
 
-    if str((x, y, visited)) in previous_positions.keys():
+    if str((x, y, visited)) in previous_positions:
         return
 
     previous_positions[str((x, y, visited))] = steps
@@ -51,7 +52,7 @@ def find_legal_positions(x, y, visited, steps):
 
 count_x, count_y = 0, 0
 previous_positions = {}
-check_spots = []
+spots = []
 spot_coordinates = {}
 layout = []
 check_counter = 8
@@ -63,7 +64,7 @@ with open("aoc24.txt") as f:
         for c in line:
             new_line.append(c)
             if c in string.digits:
-                check_spots.append(1)
+                spots.append(1)
                 spot_coordinates[c] = (count_x, count_y)
             if c == "0":
                 start_x, start_y = count_x, count_y
@@ -72,8 +73,8 @@ with open("aoc24.txt") as f:
         count_y += 1
         count_x = 0
 
-print check_spots
-start_position = Position(start_x, start_y, check_spots, 0)
+print spots
+start_position = Position(start_x, start_y, spots, 0)
 to_check = [start_position]
 
 check_counter = 8
@@ -85,15 +86,13 @@ while len(to_check) != 0:
     if current_tile in string.digits:
         to_check[0].visited[int(current_tile)] = 0
 
-    visited_check = sum(to_check[0].visited[x] for x in to_check[0].visited)
+    visited_check = sum(to_check[0].visited[x] for x in range(0, 8))
     if visited_check == 0:
         if solution == 0:
             solution = to_check[0].steps
-            print "SOLUTION CHANGED"
         else:
             if to_check[0].steps < solution:
                 solution = to_check[0].steps
-                print "SOLUTION CHANGED"
 
     if visited_check < check_counter:
         print check_counter
@@ -105,19 +104,8 @@ while len(to_check) != 0:
     del to_check[0]
     to_check = sorted(to_check, key=lambda position: position.heuristic)
 
+    if solution != 0:
+        while len(to_check) != 0 and to_check[0].steps > solution:
+            del to_check[0]
 
 print solution
-
-
-# FOR THE HEURISTIC!!!!
-# Instead of multiplying by the 1/0 sum, we should add the 1/0 value multiplied
-# by the distance from the equivalent tile! SO MUCH BETTER YES.
-
-
-# Actually, this might not be better. Well it might, but might not be enough
-# better. What we should do is, once we've found a solution, set that number of
-# steps to solution, but then keep checking while deleting any entry that has
-# a greater number of steps. once we've emptied outt our list, then we spit outt
-# the solution. So let's try to implement this.
-
-# Actually, this heuristic might be _worse_ :(
