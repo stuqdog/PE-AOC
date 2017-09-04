@@ -12,8 +12,8 @@ class Position(object):
     def update_heuristic(self):
         update = 0
         for x in range(0, 8):
-            update += ((abs(spot_coord[x][0] - self.x)
-                + abs(spot_coord[x][1] - self.y)) * self.visited[x])
+            update += ((abs(spot_coordinates[str(x)][0] - self.x)
+                + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
         self.heuristic = update + self.steps
 
 
@@ -28,31 +28,32 @@ def find_legal_positions(x, y, visited, steps):
     if layout[y + 1][x] != "#":
         new_visited = visited[:]
         new_position = Position(x, y + 1, new_visited, steps + 1)
-        new_position.update_heuristic
+        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y - 1][x] != '#':
         new_visited = visited[:]
         new_position = Position(x, y - 1, new_visited, steps + 1)
-        new_position.update_heuristic
+        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y][x + 1] != '#':
         new_visited = visited[:]
         new_position = Position(x + 1, y, new_visited, steps + 1)
-        new_position.update_heuristic
+        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y][x - 1] != '#':
         new_visited = visited[:]
         new_position = Position(x - 1, y, new_visited, steps + 1)
-        new_position.update_heuristic
+        new_position.update_heuristic()
         to_check.append(new_position)
 
 
 count_x, count_y = 0, 0
 previous_positions = {}
 spots = []
+# spot_coordinates assigns tuples of (x-val, y-val) to the must_visit spots
 spot_coordinates = {}
 layout = []
 check_counter = 8
