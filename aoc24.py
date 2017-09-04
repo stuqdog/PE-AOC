@@ -7,22 +7,11 @@ class Position(object):
         self.y = y
         self.visited = visited
         self.steps = steps
-        self.heuristic = steps
-
-    def update_heuristic(self):
-        update = 0
-        for x in range(0, 8):
-            update += ((abs(spot_coordinates[str(x)][0] - self.x)
-                + abs(spot_coordinates[str(x)][1] - self.y)) * self.visited[x])
-        self.heuristic = update + self.steps
-
 
 
 def find_legal_positions(x, y, visited, steps):
 
-    # if str((x, y, visited)) in previous_positions:
-    if str((x, y, visited)) in previous_positions and (
-        previous_positions[str((x, y, visited))] <= steps):
+    if str((x, y, visited)) in previous_positions:
         return
 
     previous_positions[str((x, y, visited))] = steps
@@ -30,25 +19,21 @@ def find_legal_positions(x, y, visited, steps):
     if layout[y + 1][x] != "#":
         new_visited = visited[:]
         new_position = Position(x, y + 1, new_visited, steps + 1)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y - 1][x] != '#':
         new_visited = visited[:]
         new_position = Position(x, y - 1, new_visited, steps + 1)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y][x + 1] != '#':
         new_visited = visited[:]
         new_position = Position(x + 1, y, new_visited, steps + 1)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
     if layout[y][x - 1] != '#':
         new_visited = visited[:]
         new_position = Position(x - 1, y, new_visited, steps + 1)
-        new_position.update_heuristic()
         to_check.append(new_position)
 
 
@@ -59,7 +44,6 @@ spots = []
 spot_coordinates = {}
 layout = []
 check_counter = 8
-solution = 0
 
 with open("aoc24.txt") as f:
     for line in f:
@@ -83,7 +67,7 @@ to_check = [start_position]
 check_counter = 8
 
 
-while len(to_check) != 0:
+while True:
 
     current_tile = layout[to_check[0].y][to_check[0].x]
     if current_tile in string.digits:
@@ -92,13 +76,7 @@ while len(to_check) != 0:
     visited_check = sum(to_check[0].visited[x] for x, i in
                         enumerate(to_check[0].visited))
     if visited_check == 0:
-        if solution == 0:
-            solution = to_check[0].steps
-            print solution
-        else:
-            if to_check[0].steps < solution:
-                solution = to_check[0].steps
-                print solution
+        break
 
     if visited_check < check_counter:
         print check_counter
@@ -108,14 +86,6 @@ while len(to_check) != 0:
                          to_check[0].steps)
 
     del to_check[0]
-    to_check = sorted(to_check, key=lambda position: position.heuristic)
+    to_check = sorted(to_check, key=lambda position: position.steps)
 
-    if solution != 0:
-        while True:
-            if len(to_check) > 0 and to_check[0].steps > solution:
-                del to_check[0]
-            else:
-                break
-
-
-print solution
+print to_check[0].steps
