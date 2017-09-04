@@ -1,13 +1,3 @@
-# Okay so, run it like in 23, with the multiplication to speed it up. But, when we
-# spit out our output, add it to a list. If it's not equal to one or zero, break.
-# If it's not the first entry and it's equal to the prior entry, we break. If length of the list
-# reaches, let's say 10?, then we break and say we have an answer. If it doesn't reach 10
-# before we break, then we iterate up our starting value and start over.
-
-# Currently we have a lot of unneccesary code, for the tgl command. Might as Well
-# leave it in, as it doesn't hurt anything and it might come up in 25b. If not, we can
-# clean it all up once we've found our solution.
-
 import re
 from sys import exit
 import string
@@ -21,18 +11,16 @@ output = []
 
 class InstructionOne(object):
 
-    def __init__(self, rule, var, toggle=False):
+    def __init__(self, rule, var):
         self.rule = rule
         self.var = var
-        self.toggle = toggle
 
 class InstructionTwo(object):
 
-    def __init__(self, rule, var_one, var_two, toggle=False):
+    def __init__(self, rule, var_one, var_two):
         self.rule = rule
         self.var_one = var_one
         self.var_two = var_two
-        self.toggle = toggle
 
 
 def cpy(copy_from, copy_to):
@@ -62,29 +50,9 @@ def jnz(check, jump):
         else:
             return jump
 
-def tgl(jump):
-    if jump in registers:
-        print registers[jump] + step
-        to_toggle = step + registers[jump]
-    elif jump in string.digits:
-        to_toggle = step + int(jump)
-    if to_toggle in range(0, instruction_length):
-        if instructions[to_toggle].toggle == True:
-            return 1
-        else:
-            instructions[to_toggle].toggle = True
-            if instructions[to_toggle].rule in ['dec', 'tgl']:
-                instructions[to_toggle].rule = "inc"
-            elif instructions[to_toggle].rule == 'inc':
-                instructions[to_toggle].rule = 'dec'
-            elif instructions[to_toggle].rule == "jnz":
-                instructions[to_toggle].rule = "cpy"
-            elif instructions[to_toggle].rule == 'cpy':
-                instructions[to_toggle].rule = 'jnz'
-    return 1
-
 def out(val):
     output.append(registers[val])
+    return 1
 
 
 def follow_instruction(line):
@@ -97,8 +65,6 @@ def follow_instruction(line):
         return dec(line.var)
     elif line.rule == "jnz":
         return jnz(line.var_one, line.var_two)
-    elif line.rule == "tgl":
-        return tgl(line.var)
     elif line.rule == "out":
         return out(line.var)
     else:
@@ -107,7 +73,7 @@ def follow_instruction(line):
         exit()
 
 
-with open("aoc23.txt") as f:
+with open("aoc25.txt") as f:
     for line in f:
         check = re.match("cpy (.*?) (a|b|c|d)", line, re.I)
         if check:
@@ -132,56 +98,16 @@ with open("aoc23.txt") as f:
                                                second_var))
             instruction_length += 1
 
-        check = re.match("tgl (.)", line, re.I)
-        if check:
-            instructions.append(InstructionOne("tgl", check.group(1)))
-            instruction_length += 1
-
         check = re.match("out (a|b|c|d)", line, re.I)
         if check:
             instructions.append(InstructionOne("out", check.group(1)))
             instruction_length += 1
 
 
-while step < instruction_length:
+while True:
 
-    if (instructions[step].rule == 'inc' and instructions[step + 1].rule ==
-          'dec' and instructions[step + 2].rule == "jnz"):
-            if instructions[step + 2].var_two == -2:
-                registers[instructions[step].var] += (
-                  registers[instructions[step + 1].var])
-                registers[instructions[step + 1].var] = 0
-            if instructions[step + 3].rule == "dec" and (
-                          instructions[step + 4].rule == "jnz" and
-                          (instructions[step - 1].var_one) in registers):
-                registers[instructions[step].var] += (
-                        registers[instructions[step - 1].var_one]
-                        * (registers[instructions[step + 3].var] - 1))
-                registers[instructions[step + 3].var] = 0
-                step += 4
-            else:
-                step += 2
-
-    elif (instructions[step].rule == 'dec' and instructions[step + 1].rule ==
-          'inc' and instructions[step + 2].rule == "jnz"):
-            if instructions[step + 2].var_two == -2:
-                registers[instructions[step + 1].var] += (
-                  registers[instructions[step].var])
-                registers[instructions[step].var] = 0
-            if instructions[step + 3].rule == "dec" and (
-                  instructions[step + 4].rule == "jnz" and
-                  (instructions[step - 1].var_one) in registers):
-                registers[instructions[step + 1].var] += (
-                        registers[instructions[step - 1].var_one]
-                        * (registers[instructions[step + 3].var] - 1))
-                registers[instructions[step + 3].var] = 0
-                step += 4
-            else:
-                step += 2
-
-    else:
-        step_change = follow_instruction(instructions[step])
-        step += step_change
+    step_change = follow_instruction(instructions[step])
+    step += step_change
 
     for value in output:
         if value not in [0, 1]:
