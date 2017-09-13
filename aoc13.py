@@ -14,7 +14,7 @@ class Position(object):
             print "Success! Number of moves is %d" % self.move
             exit()
 
-        if str(self.coordinates) in previous_positions.keys():
+        if str(self.coordinates) in previous_positions:
             return
         else:
             previous_positions[str(self.coordinates)] = self.move
