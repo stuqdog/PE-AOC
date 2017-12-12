@@ -1,38 +1,19 @@
-
-#1 Set up thing that converts strings to MD5.
-#2 create key_base, counter, and key_append
-#3 while x != 8, add key append to key_base, convert. If first 5 digits are 0,
-  # then add digit 6 to solution, and x += 1
-#4 print solution.
-
-
 import md5
 
-test = md5.new()
-solution = " "
-x = 0
-key_base = "cxdnnyjw"
+solution_two =[None] * 8
+solution = ''
+key_base = "reyedfim"
 counter = 0
 
-
-while x != 8:
-    success = True
-    key_append = str(counter)
-    key = key_base + key_append
-    test = md5.new(key)
-    check = test.hexdigest()
-    for y in range(0, 5):
-        if check[y] != "0":
-            success = False
-            break
-    print check
-    if success == True:
-        solution += check[5]
-        x += 1
+while any(x == None for x in solution_two):
+    key = key_base + str(counter)
+    test = md5.new(key).hexdigest()
+    if all(test[x] == '0' for x in range(5)):
+        solution += test[5]
+        if test[5] in ['0', '1', '2', '3', '4', '5', '6', '7']:
+            if solution_two[int(test[5])] == None:
+                solution_two[int(test[5])] = test[6]
     counter += 1
 
-
-solution = solution.lstrip()
-
-print counter
-print solution
+print("Part one solution: {}".format(solution[:8]))
+print("Part two solution: {}".format(''.join(solution_two)))
