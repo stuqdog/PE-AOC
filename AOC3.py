@@ -1,26 +1,22 @@
-from sys import argv
+def part_one():
+    with open('aoc3.txt') as f:
+        triangles = [sorted(line.strip().split(), key=lambda x: int(x)) for line in f]
 
-script, test = argv
+    return(sum(1 for tri in triangles if int(tri[2]) < (int(tri[1]) + int(tri[0]))))
 
-good_tri = 0
-bad_tri = 0
-x = 0
-triangle = []
+def part_two():
+    with open('aoc3.txt') as f:
+        triangles = [line.strip().split() for line in f]
+    solution = 0
+    tris = [[], [], []]
+    for triad in triangles:
+        tris[0].append(int(triad[0]))
+        tris[1].append(int(triad[1]))
+        tris[2].append(int(triad[2]))
+        if len(tris[0]) == 3:
+            solution += sum(1 for x in tris if sorted(x)[2] < sorted(x)[1] + sorted(x)[0])
+            tris = [[], [], []]
+    return solution
 
-with open(test) as f:
-    for line in f:
-#        for s in line.split():
-#            y = int(s)
-        y1, y2, y3 = (int(s) for s in line.split())
-        triangle.append(y1)
-        triangle.append(y2)
-        triangle.append(y3)
-        #        x += 1
-        tri_sort = sorted(triangle)
-        if tri_sort[0] + tri_sort[1] > tri_sort[2]:
-            good_tri += 1
-        else:
-            bad_tri += 1
-        triangle = []
-print "Possible triangles: %d" % good_tri
-print "Impossible triangles: %d" % bad_tri
+print(part_one())
+print(part_two())
