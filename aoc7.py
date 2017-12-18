@@ -1,62 +1,42 @@
-from sys import argv
+import re
 
-script, text = argv
-solution = 0
+with open('aoc7.txt') as f:
+    instructions = [line.strip() for line in f]
 
-with open(text) as f:
-    for line in f:
-        good_abba = False
-        bad_abba = False
-        bad_check = None
-        good_check = None
-        section = "good"
+def bad_abba_check(line):
+    check = line.replace(']', '[').split('[')
+    for x in range(1, len(check), 2):
+        a = re.search(r'(.)(.)\2\1', check[x])
+        if a and a[1] != a[2]:
+            return False
+    return True
 
-        for char in line:
-            if char not in ["[", "]"]:
-                if section == "good":
-                    bad_check = None
-                    if good_check == None:
-                        good_check = char
-                    else:
-                        good_check += char
-                elif section == "bad":
-                    good_check = None
-                    if bad_check == None:
-                        bad_check = char
-                    else:
-                        bad_check += char
+def good_abba_check(line):
+    check = line.replace(']', '[').split('[')
+    for x in range(0, len(check), 2):
+        a = re.search(r'(.)(.)\2\1', check[x])
+        if a and a[1] != a[2]:
+            return True
+    return False
 
-            if char == "[":
-                section = "bad"
-                for x in range(3, len(good_check)):
-                    if good_check[x] == good_check[x - 3]:
-                        if good_check[x - 1] == good_check[x - 2]:
-                            if good_check[x - 1] != good_check[x]:
-                                good_abba = True
+def aba_check(line):
+    check = line.replace(']', '[').split('[')
+    a = []
+    for x in range(0, len(check), 2):
+        for i in range(2, len(check[x])):
+            if check[x][i] == check[x][i-2] != check[x][i-1]:
+                a.append((check[x][i], check[x][i-1]))
+    return a
 
-            if char == "]":
-                section = "good"
-                for x in range(3, len(bad_check)):
-                    if bad_check[x] == bad_check[x - 3]:
-                        if bad_check[x - 1] == bad_check[x - 2]:
-                            if bad_check[x - 1] != bad_check[x]:
-                                bad_abba = True
+def bab_check(abas, line):
+    check = line.replace('[', ']').split(']')
+    for x in range(1, len(check), 2):
+        for aba in abas:
+            bab = aba[1] + aba[0] + aba[1]
+            if bab in check[x] and bab[0] != bab[1]:
+                return True
+    return False
 
-        if section == "good":
-            for x in range(3, len(good_check)):
-                if good_check[x] == good_check[x - 3]:
-                    if good_check[x - 1] == good_check[x - 2]:
-                        if good_check[x - 1] != good_check[x]:
-                            good_abba = True
 
-        elif section == "bad":
-            for x in range(3, len(bad_check)):
-                if bad_check[x] == bad_check[x - 3]:
-                    if bad_check[x - 1] == bad_check[x - 2]:
-                        if bad_check[x - 1] != bad_check[x]:
-                            bad_abba = True
-
-        if good_abba == True and bad_abba == False:
-            solution += 1
-
-print solution
+print(sum(1 for line in instructions if bad_abba_check(line) and good_abba_check(line)))
+print(sum(1 for line in instructions if bab_check(aba_check(line), line)))
