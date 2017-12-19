@@ -1,58 +1,57 @@
-import string
+with open('aoc9.txt') as f:
+    puzzle = [line.strip() for line in f][0]
 
-#note: the next 4 vars are all defined below, so defining them here is
-#unneccessary, but lets me comment in what purpose they serve.
+def part_one(puzzle):
+    solution = 0
+    determine_multiplier = False
+    multiplier = ''
+    add_amount = 1
+    time = 0
+    for c in puzzle:
+        if c == "(" and time == 0:
+            determine_multiplier = True
+        elif c == ')' and time == 0:
+            if determine_multiplier == True:
+                determine_multiplier = False
+                time, add_amount = map(int, multiplier.split('x'))
+                time += 1
+        elif determine_multiplier:
+            multiplier += c
+        else:
+            solution += add_amount
+        if time:
+            time -= 1
+            if time == 0:
+                add_amount = 1
+                multiplier = ''
+    return solution
 
-# number of times a section is duplicated.
-dup_number = ""
-#number of character in the section remaining to to be duplicated. Ticks down
-# as characters are added to dup_string.
-dup_len = ""
-# the string that gets duplicated
-dup_string = ""
+def part_two(puzzle):
+    solution = 0
+    multipliers = []
+    multiplier = ''
+    total_multiplier = 1
+    determine_multiplier = False
 
-
-stage = "adding"
-raw = ""
-solution = ""
-
-with open("aoc9.txt") as f:
-    for line in f:
-        raw += line
-
-for c in raw:
-
-    if stage == "duplicate":
-        if int(dup_len) > 0:
-            dup_string += c
-            dup_len = int(dup_len) - 1
-        if dup_len == 0:
-            dup_string = dup_string.strip()
-            for x in range(0, int(dup_num)):
-                solution += dup_string
-            stage = "adding"
-
-    elif stage == "dup_num":
-        if c in string.digits:
-            dup_num += c
-
-        elif c == ")":
-            stage = "duplicate"
-
-
-    elif stage == "dup_len":
-        if c in string.digits:
-            dup_len += c
-
-        elif c == "x":
-            stage = "dup_num"
-
-    elif stage == "adding":
-        dup_num = ""
-        dup_len = ""
-        dup_string = ""
+    for c in puzzle:
         if c == "(":
-            stage = "dup_len"
-        else: solution += c
+            determine_multiplier = True
+        elif c == ')':
+            determine_multiplier = False
+            time, add_amount = map(int, multiplier.split('x'))
+            multipliers.append([time, add_amount])
+            total_multiplier *= add_amount
+            multiplier = ''
+        elif determine_multiplier:
+            multiplier += c
+        else:
+            solution += total_multiplier
 
-print len(solution)
+        for i in multipliers:
+            if i[0] == 0:
+                total_multiplier //= i[1]
+            i[0] -= 1
+    return solution
+
+print(part_one(puzzle))
+print(part_two(puzzle))
