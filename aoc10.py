@@ -1,58 +1,49 @@
-from sys import exit
 import re
 
-instructions = []
 bots = {}
+output = {}
 delete_orders = []
 delete_entry = 0
-import string
 
 with open("aoc10.txt") as f:
-    for line in f:
-        entry = line.rstrip("\n")
-        instructions.append(entry)
+    instructions = [line.strip().split() for line in f]
 
-for order in instructions:
-    if "value" in order:
-        num_and_val = re.search(r'value (\d*) goes to (.*)', order)
-        bot_number = num_and_val.group(2)
-        value = int(num_and_val.group(1))
-
-        if bot_number in bots:
-            bots[bot_number].append(value)
-        else:
-            bots[bot_number] = [value]
-        delete_orders.append(delete_entry)
-    delete_entry += 1
-
-for entry in reversed(delete_orders):
-    del instructions[entry]
-
-
-while True:
-    delete_orders = []
-    delete_entry = 0
-
+def main(instructions):
     for order in instructions:
-        bot_values = re.search(r'(.*?) gives low to (.*?) and high to (.*)', order)
-        bot_number = bot_values.group(1)
-        low_bot = bot_values.group(2)
-        high_bot = bot_values.group(3)
 
-        if bot_number not in bots:
-            bots[bot_number] = []
-        if low_bot not in bots:
-            bots[low_bot] = []
-        if high_bot not in bots:
-            bots[high_bot] = []
+        if order[0] == 'value':
+            if order[5] in bots:
+                bots[order[5]].append(int(order[1]))
+            else:
+                bots[order[5]] = [int(order[1])]
+        else:
+            for i, bot in enumerate([order[1], order[6], order[11]]):
+                if order[5*i] != 'bot':
+                    output[bot] = []
+                elif bot not in bots:
+                    bots[bot] = []
 
-        if len(bots[bot_number]) == 2:
-            bots[bot_number] = sorted(bots[bot_number])
-            bots[high_bot].append(bots[bot_number][1])
-            bots[low_bot].append(bots[bot_number][0])
-            bots[bot_number] = []
+    p_one, p_two = 0, 0
+    while True:
+        for order in instructions:
+            if order[0] == 'bot' and len(bots[order[1]]) == 2:
+                if order[5] == 'bot':
+                    bots[order[6]].append(min(bots[order[1]]))
+                else:
+                    output[order[6]].append(min(bots[order[1]]))
+                if order[10] == 'bot':
+                    bots[order[11]].append(max(bots[order[1]]))
+                else:
+                    output[order[11]].append(max(bots[order[1]]))
+                if sorted(bots[order[1]]) == [17, 61]:
+                    p_one = order[1]
+                bots[order[1]] = []
+            if len(output['0']) == len(output['1']) == len(output['2']) == 1:
+                p_two = output['0'][0] * output['1'][0] * output['2'][0]
+            if p_one and p_two:
+                return p_one, p_two
 
-        for bot in bots:
-            if sorted(bots[bot]) == [17, 61]:
-                print bot
-                exit()
+
+one, two = main(instructions)
+print("Part one: {}".format(one))
+print("Part two: {}".format(two))

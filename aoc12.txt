@@ -1,4 +1,5 @@
-cpy 1 a 
+cpy 1 c
+cpy 1 a
 cpy 1 b
 cpy 26 d
 jnz c 2
@@ -14,8 +15,8 @@ jnz b -2
 cpy c b
 dec d
 jnz d -6
-cpy 13 c
-cpy 14 d
+cpy 16 c
+cpy 12 d
 inc a
 dec d
 jnz d -2
