@@ -1,4 +1,5 @@
 import md5
+import re
 
 class TestHash(object):
 
@@ -7,37 +8,33 @@ class TestHash(object):
         self.key_char = key_char
         self.countdown = 1000
 
-
-key_base = "ihaygndm"
+key_base = "qzyelonm"
 key_iterator = 0
 triplet_check = []
 solution = []
 
-while len(solution) < 64:
-    solved_triplets = []
+while len(solution) < 70:
     key = key_base + str(key_iterator)
     test = md5.new(key).hexdigest()
+    for x in xrange(2016): # delete this loop to get answer to part one.
+        test = md5.new(test).hexdigest()
 
-    for i, triplet in enumerate(triplet_check):
-        for x in range(0, len(test) - 4):
-            if all(test[y] == triplet.key_char for y in range(x, x + 5)):
-                solution.append((triplet.key_num, triplet.key_char))
-                solved_triplets.append(i)
-                print len(solution), solution[-1], key_iterator
-                break
-        triplet.countdown -= 1
-        if triplet.countdown == 0 and i not in solved_triplets:
-            solved_triplets.append(i)
+    for triplet in triplet_check:
+        fiver = triplet.key_char * 5
+        if fiver in test:
+            solution.append(triplet.key_num)
+            triplet.countdown = 0
+        else:
+            triplet.countdown -= 1
 
-    for i in reversed(solved_triplets):
-        del triplet_check[i]
+    triplet_check = [x for x in triplet_check if x.countdown > 0]
 
-    for x in range(0, len(test) - 2):
-        if test[x] == test[x + 1] and test[x] == test[x + 2]:
-            triplet_check.append(TestHash(key_iterator, test[x]))
-            break
-
+    check = re.search(r'(.)\1\1', test)
+    if check:
+        triplet_check.append(TestHash(key_iterator, check.group(1)))
     key_iterator += 1
+    if key_iterator % 2000 == 0:
+        print(key_iterator)
 
-solution = sorted(solution, key=lambda entry: entry[0])
-print solution[63], solution[-1]
+solution = sorted(solution)
+print("Part two: {}".format(solution[63]))

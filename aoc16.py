@@ -1,42 +1,19 @@
-def create_dragon(dragon_a):
-    dragon_b = []
-    for c in reversed(dragon_a):
-        if c == 0:
-            dragon_b.append(1)
-        else:
-            dragon_b.append(0)
+def main(length):
+    a = '10011111011011001'
+    while len(a) < length:
+        b = ''.join('0' if c == '1' else '1' for c in a)[::-1]
+        a = a + '0' + b
+    a = a[:length]
+    while True:
+        check = ''
+        for x in range(0, len(a), 2):
+            if a[x] == a[x+1]:
+                check += '1'
+            else:
+                check += '0'
+        if len(check) % 2 == 1:
+            return(check)
+        a = check
 
-    dragon_a.append(0)
-    dragon_a += dragon_b
-    return dragon_a
-
-
-def create_checksum(input_value):
-    check = ''
-    for x in range(0, len(input_value), 2):
-        if input_value[x] == input_value[x + 1]:
-            check += '1'
-        else:
-            check += '0'
-    return check
-
-value = []
-start = "01111001100111011"
-
-for c in start:
-    if c == '1':
-        value.append(1)
-    else:
-        value.append(0)
-
-
-while len(value) < 35651584:
-    value = create_dragon(value)
-
-value = value[:35651584]
-checksum =  create_checksum(value)
-
-while len(checksum) % 2 == 0:
-    checksum = create_checksum(checksum)
-
-print checksum
+print(main(272))
+print(main(35651584))

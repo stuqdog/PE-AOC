@@ -1,39 +1,21 @@
-def find_tile_type(tile):
+first_row = '.^^..^...^..^^.^^^.^^^.^^^^^^.^.^^^^.^^.^^^^^^.^...^......^...^^^..^^^.....^^^^^^^^^....^^...^^^^..^'
+rows = [[True if c == '.' else False for c in first_row]]
+solution = sum(1 for c in first_row if c == '.')
 
-    if tile in range(0, len(start_line) - 1):
-        right = rows[-1][tile + 1]
-    else:
-        right = "."
-
-    if tile in range(1, len(start_line)):
-        left = rows[-1][tile - 1]
-    else:
-        left = "."
-
-    center = rows[-1][tile]
-
-    if left != right:
-        return '^'
-    else:
-        return '.'
-
-
-with open("aoc18.txt") as f:
-    start_line = f.readline().strip()
-rows = [list(start_line)]
-
-# generate 39 new rows, since the first one is a freebie
-for x in range(0, 39):
+for x in range(399999):
     new_row = []
-    for y in range(0, len(start_line)):
-        new_tile = find_tile_type(y)
-        new_row.append(new_tile)
+    for y in range(len(first_row)):
+        if y == 0:
+            new_row.append(rows[x][y+1])
+        elif y == 99:
+            new_row.append(rows[x][y-1])
+        else:
+            if rows[x][y-1] == rows[x][y+1]:
+                new_row.append(True)
+            else:
+                new_row.append(False)
+    solution += sum(1 for c in new_row if c == True)
     rows.append(new_row)
-
-solution = 0
-for row in rows:
-    for tile in row:
-        if tile == ".":
-            solution += 1
-
-print solution
+    if x == 38:
+        print("Part one: {}".format(solution))
+print("Part two: {}".format(solution))
